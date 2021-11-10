@@ -40,7 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [
             SizedBox(
               width: 180.0,
-              height: 400.0,
+              height: 360.0,
               child: ElevatedButton(
                 onPressed: () {},
                 child: Text(
@@ -63,11 +63,11 @@ class _MyHomePageState extends State<MyHomePage> {
               alignment: Alignment.topRight,
               child: SizedBox(
                 width: 180.0,
-                height: 400.0,
+                height: 360.0,
                 child: ElevatedButton(
                   onPressed: () {},
                   child: Text(
-                    "Let's play 1'st game",
+                    "Let's play 2'nd game",
                     textAlign: TextAlign.center,
                     style: GoogleFonts.overpass(
                         fontSize: 31.0, color: Colors.white),
@@ -87,11 +87,11 @@ class _MyHomePageState extends State<MyHomePage> {
               alignment: Alignment.bottomLeft,
               child: SizedBox(
                 width: 180.0,
-                height: 400.0,
+                height: 360.0,
                 child: ElevatedButton(
                   onPressed: () {},
                   child: Text(
-                    "Let's play 1'st game",
+                    "Let's read the rules",
                     textAlign: TextAlign.center,
                     style: GoogleFonts.overpass(
                         fontSize: 31.0, color: Colors.white),
@@ -111,11 +111,11 @@ class _MyHomePageState extends State<MyHomePage> {
               alignment: Alignment.bottomRight,
               child: SizedBox(
                 width: 180.0,
-                height: 400.0,
+                height: 360.0,
                 child: ElevatedButton(
                   onPressed: () {},
                   child: Text(
-                    "Let's play 1'st game",
+                    "Let's leave the game",
                     textAlign: TextAlign.center,
                     style: GoogleFonts.overpass(
                         fontSize: 31.0, color: Colors.white),
