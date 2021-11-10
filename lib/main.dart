@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:praktapp/cameragame.dart';
 
 void main() {
   runApp(const MyApp());
@@ -42,7 +43,10 @@ class _MyHomePageState extends State<MyHomePage> {
               width: 180.0,
               height: 360.0,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => const CamPage()));
+                },
                 child: Text(
                   "Let's play 1'st game",
                   textAlign: TextAlign.center,
@@ -50,8 +54,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       GoogleFonts.overpass(fontSize: 31.0, color: Colors.white),
                 ),
                 style: ElevatedButton.styleFrom(
+                  side: const BorderSide(color: Colors.white, width: 1),
                   primary: Colors.redAccent,
-                  side: const BorderSide(width: 3, color: Colors.white),
                   elevation: 30,
                   shape: const RoundedRectangleBorder(
                       borderRadius:
@@ -74,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   style: ElevatedButton.styleFrom(
                     primary: Colors.greenAccent,
-                    side: const BorderSide(width: 3, color: Colors.white),
+                    side: const BorderSide(width: 1, color: Colors.white),
                     elevation: 30,
                     shape: const RoundedRectangleBorder(
                         borderRadius:
@@ -98,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   style: ElevatedButton.styleFrom(
                     primary: Colors.blueAccent,
-                    side: const BorderSide(width: 3, color: Colors.white),
+                    side: const BorderSide(width: 1, color: Colors.white),
                     elevation: 30,
                     shape: const RoundedRectangleBorder(
                         borderRadius:
@@ -122,7 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   style: ElevatedButton.styleFrom(
                     primary: Colors.yellowAccent,
-                    side: const BorderSide(width: 3, color: Colors.white),
+                    side: const BorderSide(width: 1, color: Colors.white),
                     elevation: 30,
                     shape: const RoundedRectangleBorder(
                         borderRadius:

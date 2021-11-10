@@ -15,17 +15,17 @@ import 'package:permission_handler/permission_handler.dart';
 import 'pose_mask_painter.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const CamPage());
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+class CamPage extends StatefulWidget {
+  const CamPage({Key? key}) : super(key: key);
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<CamPage> createState() => _CamPageState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _CamPageState extends State<CamPage> {
   int _selectedTabIndex = 0;
 
   bool _isDetectingPose = false;
