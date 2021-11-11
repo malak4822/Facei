@@ -217,36 +217,7 @@ class _CamPageState extends State<CamPage> {
   Widget get _imageDetectionView => SingleChildScrollView(
         child: Center(
           child: Column(
-            children: [
-              GestureDetector(
-                child: ClipRect(
-                  child: CustomPaint(
-                    child: _selectedImage,
-                    foregroundPainter: PoseMaskPainter(
-                      pose: _detectedPose,
-                      mask: _maskImage,
-                      imageSize: _imageSize,
-                    ),
-                  ),
-                ),
-              ),
-              OutlinedButton(
-                onPressed: _selectImage,
-                child: const Text('Select image'),
-              ),
-              OutlinedButton(
-                onPressed: _detectImagePose,
-                child: const Text('Detect pose'),
-              ),
-              OutlinedButton(
-                onPressed: _detectImageBodyMask,
-                child: const Text('Detect body mask'),
-              ),
-              OutlinedButton(
-                onPressed: _resetState,
-                child: const Text('Clear'),
-              ),
-            ],
+            children: [],
           ),
         ),
       );
@@ -268,14 +239,14 @@ class _CamPageState extends State<CamPage> {
               OutlinedButton(
                 onPressed: _toggleDetectPose,
                 child: _isDetectingPose
-                    ? const Text('Turn off pose detection')
-                    : const Text('Turn on pose detection'),
+                    ? const Text("włącz wykrywanie maski")
+                    : const Text("Włącz wykrywanie pozy"),
               ),
               OutlinedButton(
                 onPressed: _toggleDetectBodyMask,
                 child: _isDetectingBodyMask
-                    ? const Text('Turn off body mask detection')
-                    : const Text('Turn on body mask detection'),
+                    ? const Text("Wyłącz wykrywanie maski")
+                    : const Text("Włącz wykrywanie maski"),
               ),
             ],
           ),
@@ -285,25 +256,29 @@ class _CamPageState extends State<CamPage> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
+        backgroundColor: Colors.white38,
         appBar: AppBar(
-          title: const Text('Body Detection Plugin Example App'),
+          backgroundColor: Colors.redAccent,
+          centerTitle: true,
+          title: const Text('Kliknij w przycisk'),
         ),
         bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(Icons.image),
-              label: 'Image',
+              label: "Gra 1",
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.camera),
-              label: 'Camera',
+              label: "Gra 2",
             ),
           ],
           currentIndex: _selectedTabIndex,
           onTap: _onTabSelectTapped,
         ),
-        body: _selectedTab,
+        body: _cameraDetectionView,
       ),
     );
   }
