@@ -1,16 +1,16 @@
-import 'dart:io';
 import 'dart:typed_data';
-
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:body_detection/models/image_result.dart';
 import 'package:body_detection/models/pose.dart';
 import 'package:body_detection/models/body_mask.dart';
-import 'package:body_detection/png_image.dart';
-import 'package:file_picker/file_picker.dart';
+
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
 import 'package:body_detection/body_detection.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:praktapp/main.dart';
 
 import 'pose_mask_painter.dart';
 
@@ -31,45 +31,10 @@ class _CamPageState extends State<CamPage> {
   bool _isDetectingPose = false;
   bool _isDetectingBodyMask = false;
 
-  Image? _selectedImage;
-
   Pose? _detectedPose;
   ui.Image? _maskImage;
   Image? _cameraImage;
   Size _imageSize = Size.zero;
-
-  Future<void> _selectImage() async {
-    FilePickerResult? result =
-        await FilePicker.platform.pickFiles(type: FileType.image);
-    if (result == null || result.files.isEmpty) return;
-    final path = result.files.single.path;
-    if (path != null) {
-      _resetState();
-      setState(() {
-        _selectedImage = Image.file(File(path));
-      });
-    }
-  }
-
-  Future<void> _detectImagePose() async {
-    PngImage? pngImage = await _selectedImage?.toPngImage();
-    if (pngImage == null) return;
-    setState(() {
-      _imageSize = Size(pngImage.width.toDouble(), pngImage.height.toDouble());
-    });
-    final pose = await BodyDetection.detectPose(image: pngImage);
-    _handlePose(pose);
-  }
-
-  Future<void> _detectImageBodyMask() async {
-    PngImage? pngImage = await _selectedImage?.toPngImage();
-    if (pngImage == null) return;
-    setState(() {
-      _imageSize = Size(pngImage.width.toDouble(), pngImage.height.toDouble());
-    });
-    final mask = await BodyDetection.detectBodyMask(image: pngImage);
-    _handleBodyMask(mask);
-  }
 
   Future<void> _startCameraStream() async {
     final request = await Permission.camera.request();
@@ -140,7 +105,7 @@ class _CamPageState extends State<CamPage> {
 
     final bytes = mask.buffer
         .expand(
-          (it) => [0, 0, 0, (it * 255).toInt()],
+          (it) => [0, 0, 0, (it * 230).toInt()],
         )
         .toList();
     ui.decodeImageFromPixels(Uint8List.fromList(bytes), mask.width, mask.height,
@@ -194,33 +159,12 @@ class _CamPageState extends State<CamPage> {
   void _onTabSelectTapped(int index) {
     _onTabExit(_selectedTabIndex);
     _onTabEnter(index);
+    _startCameraStream();
 
     setState(() {
       _selectedTabIndex = index;
     });
   }
-
-  Widget? get _selectedTab => _selectedTabIndex == 0
-      ? _imageDetectionView
-      : _selectedTabIndex == 1
-          ? _cameraDetectionView
-          : null;
-
-  void _resetState() {
-    setState(() {
-      _maskImage = null;
-      _detectedPose = null;
-      _imageSize = Size.zero;
-    });
-  }
-
-  Widget get _imageDetectionView => SingleChildScrollView(
-        child: Center(
-          child: Column(
-            children: [],
-          ),
-        ),
-      );
 
   Widget get _cameraDetectionView => SingleChildScrollView(
         child: Center(
@@ -236,18 +180,6 @@ class _CamPageState extends State<CamPage> {
                   ),
                 ),
               ),
-              OutlinedButton(
-                onPressed: _toggleDetectPose,
-                child: _isDetectingPose
-                    ? const Text("włącz wykrywanie maski")
-                    : const Text("Włącz wykrywanie pozy"),
-              ),
-              OutlinedButton(
-                onPressed: _toggleDetectBodyMask,
-                child: _isDetectingBodyMask
-                    ? const Text("Wyłącz wykrywanie maski")
-                    : const Text("Włącz wykrywanie maski"),
-              ),
             ],
           ),
         ),
@@ -255,31 +187,162 @@ class _CamPageState extends State<CamPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        backgroundColor: Colors.white38,
-        appBar: AppBar(
-          backgroundColor: Colors.redAccent,
-          centerTitle: true,
-          title: const Text('Kliknij w przycisk'),
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.image),
-              label: "Gra 1",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.camera),
-              label: "Gra 2",
-            ),
-          ],
-          currentIndex: _selectedTabIndex,
-          onTap: _onTabSelectTapped,
-        ),
-        body: _cameraDetectionView,
-      ),
+    return Scaffold(
+      backgroundColor: Colors.white38,
+      body: LayoutBuilder(builder: (context, constraints) {
+        return Stack(children: [
+          Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            _cameraDetectionView,
+            ElevatedButton(
+                style: ElevatedButton.styleFrom(primary: Colors.white),
+                onPressed: () {
+                  _startCameraStream();
+                  _toggleDetectPose();
+                  _toggleDetectBodyMask();
+                },
+                child: Text(
+                  "Włącz / Wyłącz kamerę",
+                  style:
+                      GoogleFonts.overpass(color: Colors.black, fontSize: 20.0),
+                )),
+          ]),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+                color: Colors.white38,
+                height: 100.0,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: Material(
+                        color: Colors.orange.withOpacity(0.5),
+                        borderRadius: BorderRadius.circular(15),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(15),
+                          splashColor: Colors.orange,
+                          highlightColor: Colors.transparent,
+                          onTap: () {},
+                          child: SizedBox(
+                            width: 100.0,
+                            height: 70.0,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const FaIcon(
+                                  FontAwesomeIcons.carrot,
+                                  color: Colors.white,
+                                ),
+                                Center(
+                                  child: Text(
+                                    "Carrot",
+                                    style: GoogleFonts.overpass(
+                                        fontSize: 20.0, color: Colors.white),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: Material(
+                        color: Colors.red.withOpacity(0.6),
+                        borderRadius: BorderRadius.circular(15),
+                        child: InkWell(
+                          splashColor: Colors.red,
+                          highlightColor: Colors.transparent,
+                          borderRadius: BorderRadius.circular(15),
+                          onTap: () {},
+                          child: SizedBox(
+                            width: 100.0,
+                            height: 70.0,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const FaIcon(FontAwesomeIcons.appleAlt,
+                                    color: Colors.white),
+                                Center(
+                                  child: Text(
+                                    "Apple",
+                                    style: GoogleFonts.overpass(
+                                        fontSize: 20.0, color: Colors.white),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: Material(
+                        color: Colors.yellow.withOpacity(0.6),
+                        borderRadius: BorderRadius.circular(15),
+                        child: InkWell(
+                            splashColor: Colors.yellow,
+                            highlightColor: Colors.transparent,
+                            borderRadius: BorderRadius.circular(15),
+                            onTap: () {},
+                            child: SizedBox(
+                              width: 100.0,
+                              height: 70.0,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const FaIcon(FontAwesomeIcons.lemon,
+                                      color: Colors.white),
+                                  Center(
+                                    child: Text(
+                                      "Lemon",
+                                      style: GoogleFonts.overpass(
+                                          fontSize: 20.0, color: Colors.white),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: Material(
+                          color: Colors.green.withOpacity(0.6),
+                          borderRadius: BorderRadius.circular(15),
+                          child: InkWell(
+                            splashColor: Colors.green.withOpacity(0.7),
+                            borderRadius: BorderRadius.circular(15),
+                            highlightColor: Colors.transparent,
+                            onTap: () {},
+                            child: SizedBox(
+                              width: 100.0,
+                              height: 70.0,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const FaIcon(FontAwesomeIcons.leaf,
+                                      color: Colors.white),
+                                  Center(
+                                    child: Text(
+                                      "Leaf",
+                                      style: GoogleFonts.overpass(
+                                          fontSize: 20.0, color: Colors.white),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )),
+                    )
+                  ],
+                )),
+          )
+        ]);
+      }),
     );
   }
 }

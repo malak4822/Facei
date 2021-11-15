@@ -44,8 +44,11 @@ class _MyHomePageState extends State<MyHomePage> {
               height: 360.0,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const CamPage()));
+                  Navigator.of(context).push(PageRouteBuilder(
+                    pageBuilder: (context, animation, _) {
+                      return const CamPage();
+                    },
+                  ));
                 },
                 child: Text(
                   "Let's play 1'st game",
@@ -55,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 style: ElevatedButton.styleFrom(
                   side: const BorderSide(color: Colors.white, width: 1),
-                  primary: Colors.redAccent,
+                  primary: Colors.black12,
                   elevation: 30,
                   shape: const RoundedRectangleBorder(
                       borderRadius:
@@ -77,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         fontSize: 31.0, color: Colors.white),
                   ),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.greenAccent,
+                    primary: Colors.black12,
                     side: const BorderSide(width: 1, color: Colors.white),
                     elevation: 30,
                     shape: const RoundedRectangleBorder(
@@ -101,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         fontSize: 31.0, color: Colors.white),
                   ),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.blueAccent,
+                    primary: Colors.black12,
                     side: const BorderSide(width: 1, color: Colors.white),
                     elevation: 30,
                     shape: const RoundedRectangleBorder(
@@ -125,7 +128,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         fontSize: 31.0, color: Colors.white),
                   ),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.yellowAccent,
+                    primary: Colors.black12,
                     side: const BorderSide(width: 1, color: Colors.white),
                     elevation: 30,
                     shape: const RoundedRectangleBorder(
