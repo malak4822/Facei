@@ -10,7 +10,6 @@ import 'dart:ui' as ui;
 import 'package:body_detection/body_detection.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:praktapp/main.dart';
 
 import 'pose_mask_painter.dart';
 
