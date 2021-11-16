@@ -194,13 +194,31 @@ class _CamPageState extends State<CamPage> {
             _cameraDetectionView,
             ElevatedButton(
                 style: ElevatedButton.styleFrom(primary: Colors.white),
-                onPressed: () {
+                onPressed: () async {
                   _startCameraStream();
-                  _toggleDetectPose();
+                },
+                child: Text(
+                  "Włącz kamerę",
+                  style:
+                      GoogleFonts.overpass(color: Colors.black, fontSize: 20.0),
+                )),
+            ElevatedButton(
+                style: ElevatedButton.styleFrom(primary: Colors.white),
+                onPressed: () async {
+                  _stopCameraStream();
+                },
+                child: Text(
+                  "Wyłącz kamerę",
+                  style:
+                      GoogleFonts.overpass(color: Colors.black, fontSize: 20.0),
+                )),
+            ElevatedButton(
+                style: ElevatedButton.styleFrom(primary: Colors.white),
+                onPressed: () async {
                   _toggleDetectBodyMask();
                 },
                 child: Text(
-                  "Włącz / Wyłącz kamerę",
+                  "Wyłącz / Wyłącz odk",
                   style:
                       GoogleFonts.overpass(color: Colors.black, fontSize: 20.0),
                 )),
@@ -208,7 +226,7 @@ class _CamPageState extends State<CamPage> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-                color: Colors.white38,
+                color: Colors.black12,
                 height: 100.0,
                 child: ListView(
                   scrollDirection: Axis.horizontal,
@@ -249,7 +267,7 @@ class _CamPageState extends State<CamPage> {
                     Padding(
                       padding: const EdgeInsets.all(15),
                       child: Material(
-                        color: Colors.red.withOpacity(0.6),
+                        color: Colors.red.withOpacity(0.5),
                         borderRadius: BorderRadius.circular(15),
                         child: InkWell(
                           splashColor: Colors.red,
