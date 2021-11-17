@@ -73,7 +73,7 @@ class _CamPageState extends State<CamPage> {
     final image = Image.memory(
       result.bytes,
       gaplessPlayback: true,
-      fit: BoxFit.contain,
+      fit: BoxFit.fill,
     );
 
     setState(() {
@@ -216,6 +216,7 @@ class _CamPageState extends State<CamPage> {
                 style: ElevatedButton.styleFrom(primary: Colors.white),
                 onPressed: () async {
                   _toggleDetectBodyMask();
+                  _toggleDetectPose();
                 },
                 child: Text(
                   "Wyłącz / Wyłącz odk",

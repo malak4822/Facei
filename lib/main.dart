@@ -69,6 +69,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   if (selected4 == false) {
                     selected4 = true;
                   }
+                  if (selected1 == true) {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => CamPage()));
+                  }
                 },
                 child: Text(
                   "Let's play 1'st game",
