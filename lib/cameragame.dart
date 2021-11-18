@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:typed_data';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:body_detection/models/image_result.dart';
 import 'package:body_detection/models/pose.dart';
@@ -25,6 +27,10 @@ class CamPage extends StatefulWidget {
 }
 
 class _CamPageState extends State<CamPage> {
+  ui.Image? zdj;
+  ui.Image? nic;
+
+  bool _isAppleVis = false;
   int _selectedTabIndex = 0;
 
   bool _isDetectingPose = false;
@@ -165,20 +171,68 @@ class _CamPageState extends State<CamPage> {
     });
   }
 
+  @override
+  void initState() {
+    super.initState();
+
+    loadImage("img/apple.png");
+  }
+
+  Future loadImage(String path) async {
+    final data = await rootBundle.load(path);
+    final bytes = data.buffer.asUint8List();
+    final zdj = await decodeImageFromList(bytes);
+
+    setState(() => this.zdj = zdj);
+  }
+
   Widget get _cameraDetectionView => SingleChildScrollView(
         child: Center(
           child: Column(
             children: [
-              ClipRect(
+              ClipRRect(
+                borderRadius: BorderRadius.circular(15),
                 child: CustomPaint(
                   child: _cameraImage,
                   foregroundPainter: PoseMaskPainter(
+                    zdj: _isAppleVis ? zdj : nic,
                     pose: _detectedPose,
                     mask: _maskImage,
                     imageSize: _imageSize,
                   ),
                 ),
               ),
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(primary: Colors.white),
+                  onPressed: () async {
+                    _startCameraStream();
+                  },
+                  child: Text(
+                    "Włącz kamerę",
+                    style: GoogleFonts.overpass(
+                        color: Colors.black, fontSize: 20.0),
+                  )),
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(primary: Colors.white),
+                  onPressed: () async {
+                    _stopCameraStream();
+                  },
+                  child: Text(
+                    "Wyłącz kamerę",
+                    style: GoogleFonts.overpass(
+                        color: Colors.black, fontSize: 20.0),
+                  )),
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(primary: Colors.white),
+                  onPressed: () async {
+                    _toggleDetectBodyMask();
+                    _toggleDetectPose();
+                  },
+                  child: Text(
+                    "Wyłącz / Wyłącz odk",
+                    style: GoogleFonts.overpass(
+                        color: Colors.black, fontSize: 20.0),
+                  )),
             ],
           ),
         ),
@@ -192,37 +246,6 @@ class _CamPageState extends State<CamPage> {
         return Stack(children: [
           Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             _cameraDetectionView,
-            ElevatedButton(
-                style: ElevatedButton.styleFrom(primary: Colors.white),
-                onPressed: () async {
-                  _startCameraStream();
-                },
-                child: Text(
-                  "Włącz kamerę",
-                  style:
-                      GoogleFonts.overpass(color: Colors.black, fontSize: 20.0),
-                )),
-            ElevatedButton(
-                style: ElevatedButton.styleFrom(primary: Colors.white),
-                onPressed: () async {
-                  _stopCameraStream();
-                },
-                child: Text(
-                  "Wyłącz kamerę",
-                  style:
-                      GoogleFonts.overpass(color: Colors.black, fontSize: 20.0),
-                )),
-            ElevatedButton(
-                style: ElevatedButton.styleFrom(primary: Colors.white),
-                onPressed: () async {
-                  _toggleDetectBodyMask();
-                  _toggleDetectPose();
-                },
-                child: Text(
-                  "Wyłącz / Wyłącz odk",
-                  style:
-                      GoogleFonts.overpass(color: Colors.black, fontSize: 20.0),
-                )),
           ]),
           Align(
             alignment: Alignment.bottomCenter,
@@ -274,7 +297,13 @@ class _CamPageState extends State<CamPage> {
                           splashColor: Colors.red,
                           highlightColor: Colors.transparent,
                           borderRadius: BorderRadius.circular(15),
-                          onTap: () {},
+                          onTap: () {
+                            setState(() {
+                              if (_isDetectingBodyMask == true) {
+                                _isAppleVis = !_isAppleVis;
+                              }
+                            });
+                          },
                           child: SizedBox(
                             width: 100.0,
                             height: 70.0,

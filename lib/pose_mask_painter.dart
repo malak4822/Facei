@@ -1,5 +1,5 @@
 import 'dart:ui' as ui;
-
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:body_detection/models/pose.dart';
 import 'package:body_detection/models/pose_landmark.dart';
@@ -7,16 +7,18 @@ import 'package:body_detection/models/pose_landmark_type.dart';
 
 class PoseMaskPainter extends CustomPainter {
   PoseMaskPainter({
+    this.zdj,
     required this.pose,
     required this.mask,
     required this.imageSize,
   });
 
+  final ui.Image? zdj;
   final Pose? pose;
   final ui.Image? mask;
   final Size imageSize;
-  final pointPaint = Paint()..color = const Color.fromRGBO(255, 255, 255, 0.8);
-  final leftPointPaint = Paint()..color = const Color.fromRGBO(223, 157, 80, 1);
+  final pointPaint = Paint()..color = const Color.fromRGBO(0, 0, 0, 1);
+  final leftPointPaint = Paint()..color = const Color.fromRGBO(40, 245, 200, 1);
   final rightPointPaint = Paint()
     ..color = const Color.fromRGBO(100, 208, 218, 1);
   final linePaint = Paint()
@@ -24,12 +26,19 @@ class PoseMaskPainter extends CustomPainter {
     ..strokeWidth = 3;
   final maskPaint = Paint()
     ..colorFilter = const ColorFilter.mode(
-        Color.fromRGBO(0, 0, 255, 0.5), BlendMode.srcOut);
+        Color.fromRGBO(197, 108, 175, 0.6), BlendMode.srcOut);
 
   @override
   void paint(Canvas canvas, Size size) {
     _paintMask(canvas, size);
     _paintPose(canvas, size);
+    _paintedObject(canvas, size);
+    canvas.drawImage(zdj!, Offset.zero, Paint());
+  }
+
+  void _paintedObject(ui.Canvas canvas, ui.Size size) {
+    canvas.drawCircle(
+        const Offset(100, 100), 15, Paint()..color = Colors.cyanAccent);
   }
 
   void _paintPose(Canvas canvas, Size size) {
@@ -53,26 +62,19 @@ class PoseMaskPainter extends CustomPainter {
 
     for (final part in pose!.landmarks) {
       // Landmark points
-      canvas.drawCircle(offsetForPart(part), 5, pointPaint);
+      canvas.drawCircle(offsetForPart(part), 8, pointPaint);
       if (part.type.isLeftSide) {
-        canvas.drawCircle(offsetForPart(part), 3, leftPointPaint);
+        canvas.drawCircle(offsetForPart(part), 5, leftPointPaint);
       } else if (part.type.isRightSide) {
-        canvas.drawCircle(offsetForPart(part), 3, rightPointPaint);
+        canvas.drawCircle(offsetForPart(part), 5, rightPointPaint);
       }
 
       // Landmark labels
       TextSpan span = TextSpan(
         text: part.type.toString().substring(16),
         style: const TextStyle(
-          color: Color.fromRGBO(0, 128, 255, 1),
+          color: Color.fromRGBO(197, 255, 175, 1),
           fontSize: 10,
-          shadows: [
-            ui.Shadow(
-              color: Color.fromRGBO(255, 255, 255, 1),
-              offset: Offset(1, 1),
-              blurRadius: 1,
-            ),
-          ],
         ),
       );
       TextPainter tp = TextPainter(text: span, textAlign: TextAlign.left);
