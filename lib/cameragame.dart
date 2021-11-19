@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -15,6 +14,8 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'pose_mask_painter.dart';
 
+import 'dart:ui';
+
 void main() {
   runApp(const CamPage());
 }
@@ -24,6 +25,19 @@ class CamPage extends StatefulWidget {
 
   @override
   State<CamPage> createState() => _CamPageState();
+}
+
+class ZdjResult {
+  final Size rozm;
+
+  ZdjResult({
+    required this.rozm,
+  });
+
+  factory ZdjResult.fromMap(Map<dynamic, dynamic> map) => ZdjResult(
+      rozm: map['width'] != 20 && map['height'] != 20
+          ? Size(map['width'].toDouble(), map['height'].toDouble())
+          : Size.zero);
 }
 
 class _CamPageState extends State<CamPage> {
@@ -40,6 +54,7 @@ class _CamPageState extends State<CamPage> {
   ui.Image? _maskImage;
   Image? _cameraImage;
   Size _imageSize = Size.zero;
+  Size zdjSize = Size.zero;
 
   Future<void> _startCameraStream() async {
     final request = await Permission.camera.request();
@@ -85,6 +100,19 @@ class _CamPageState extends State<CamPage> {
     setState(() {
       _cameraImage = image;
       _imageSize = result.size;
+    });
+  }
+
+  void _handleZdjImage(ZdjResult rezultat) {
+    // Ignore callback if navigated out of the page.
+
+    // To avoid a memory leak issue.
+    // https://github.com/flutter/flutter/issues/60160
+    PaintingBinding.instance?.imageCache?.clear();
+    PaintingBinding.instance?.imageCache?.clearLiveImages();
+
+    setState(() {
+      zdjSize = rezultat.rozm;
     });
   }
 
@@ -191,7 +219,7 @@ class _CamPageState extends State<CamPage> {
           child: Column(
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: BorderRadius.circular(30),
                 child: CustomPaint(
                   child: _cameraImage,
                   foregroundPainter: PoseMaskPainter(
@@ -299,6 +327,7 @@ class _CamPageState extends State<CamPage> {
                           borderRadius: BorderRadius.circular(15),
                           onTap: () {
                             setState(() {
+                              _handleZdjImage(ZdjResult(rozm: zdjSize));
                               if (_isDetectingBodyMask == true) {
                                 _isAppleVis = !_isAppleVis;
                               }

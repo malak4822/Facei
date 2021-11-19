@@ -38,6 +38,7 @@ dependencies:
   body_detection: ^0.0.2
   permission_handler: ^8.2.6
   font_awesome_flutter: ^9.2.0
+  flutter_native_image: ^0.0.6+1
 
 dev_dependencies:
   flutter_test:

@@ -29,16 +29,31 @@ class PoseMaskPainter extends CustomPainter {
         Color.fromRGBO(197, 108, 175, 0.6), BlendMode.srcOut);
 
   @override
-  void paint(Canvas canvas, Size size) {
+  void paint(ui.Canvas canvas, Size size) {
     _paintMask(canvas, size);
     _paintPose(canvas, size);
-    _paintedObject(canvas, size);
-    canvas.drawImage(zdj!, Offset.zero, Paint());
+
+    if (zdj != null) {
+      paintimage(canvas, zdj!, Offset(200, 200), 0.2);
+    }
   }
 
-  void _paintedObject(ui.Canvas canvas, ui.Size size) {
-    canvas.drawCircle(
-        const Offset(100, 100), 15, Paint()..color = Colors.cyanAccent);
+  void paintimage(
+    ui.Canvas canvas,
+    ui.Image image,
+    Offset centrum,
+    double skala,
+  ) {
+    final double left = -1 / 2 * image.width * skala;
+    final double top = -1 / 2 * image.height * skala;
+    final double right = 1 / 2 * image.width * skala;
+    final double bottom = 1 / 2 * image.height * skala;
+    canvas.drawImageRect(
+        image,
+        Rect.fromLTRB(0, 0, image.width.toDouble(), image.height.toDouble()),
+        Rect.fromLTRB(left + centrum.dx, top + centrum.dy, right + centrum.dx,
+            bottom + centrum.dy),
+        Paint());
   }
 
   void _paintPose(Canvas canvas, Size size) {
@@ -97,6 +112,7 @@ class PoseMaskPainter extends CustomPainter {
   @override
   bool shouldRepaint(PoseMaskPainter oldDelegate) {
     return oldDelegate.pose != pose ||
+        oldDelegate.zdj != zdj ||
         oldDelegate.mask != mask ||
         oldDelegate.imageSize != imageSize;
   }
