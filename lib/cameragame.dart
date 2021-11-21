@@ -253,6 +253,9 @@ class _CamPageState extends State<CamPage> {
               ElevatedButton(
                   style: ElevatedButton.styleFrom(primary: Colors.white),
                   onPressed: () async {
+                    if (_isAppleVis == true) {
+                      _isAppleVis = !_isAppleVis;
+                    }
                     _toggleDetectBodyMask();
                     _toggleDetectPose();
                   },

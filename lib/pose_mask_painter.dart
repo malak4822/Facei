@@ -34,7 +34,7 @@ class PoseMaskPainter extends CustomPainter {
     _paintPose(canvas, size);
 
     if (zdj != null) {
-      paintimage(canvas, zdj!, Offset(200, 200), 0.2);
+      paintimage(canvas, zdj!, Offset(100, 100), 0.2);
     }
   }
 
