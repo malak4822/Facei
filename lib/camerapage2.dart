@@ -17,14 +17,14 @@ import 'pose_mask_painter.dart';
 import 'dart:ui';
 
 void main() {
-  runApp(const CamPage());
+  runApp(const SecCamPage());
 }
 
-class CamPage extends StatefulWidget {
-  const CamPage({Key? key}) : super(key: key);
+class SecCamPage extends StatefulWidget {
+  const SecCamPage({Key? key}) : super(key: key);
 
   @override
-  State<CamPage> createState() => _CamPageState();
+  State<SecCamPage> createState() => _SecCamPageState();
 }
 
 class ZdjResult {
@@ -40,7 +40,7 @@ class ZdjResult {
           : Size.zero);
 }
 
-class _CamPageState extends State<CamPage> {
+class _SecCamPageState extends State<SecCamPage> {
   ui.Image? zdj;
   ui.Image? nic;
 
@@ -281,144 +281,7 @@ class _CamPageState extends State<CamPage> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-                color: Colors.black12,
-                height: 100.0,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(15),
-                      child: Material(
-                        color: Colors.orange.withOpacity(0.5),
-                        borderRadius: BorderRadius.circular(15),
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(15),
-                          splashColor: Colors.orange,
-                          highlightColor: Colors.transparent,
-                          onTap: () {},
-                          child: SizedBox(
-                            width: 100.0,
-                            height: 70.0,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const FaIcon(
-                                  FontAwesomeIcons.carrot,
-                                  color: Colors.white,
-                                ),
-                                Center(
-                                  child: Text(
-                                    "Carrot",
-                                    style: GoogleFonts.overpass(
-                                        fontSize: 20.0, color: Colors.white),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(15),
-                      child: Material(
-                        color: Colors.red.withOpacity(0.5),
-                        borderRadius: BorderRadius.circular(15),
-                        child: InkWell(
-                          splashColor: Colors.red,
-                          highlightColor: Colors.transparent,
-                          borderRadius: BorderRadius.circular(15),
-                          onTap: () {
-                            setState(() {
-                              _handleZdjImage(ZdjResult(rozm: zdjSize));
-                              if (_isDetectingPose == true) {
-                                _isAppleVis = !_isAppleVis;
-                              }
-                            });
-                          },
-                          child: SizedBox(
-                            width: 100.0,
-                            height: 70.0,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const FaIcon(FontAwesomeIcons.appleAlt,
-                                    color: Colors.white),
-                                Center(
-                                  child: Text(
-                                    "Apple",
-                                    style: GoogleFonts.overpass(
-                                        fontSize: 20.0, color: Colors.white),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(15),
-                      child: Material(
-                        color: Colors.yellow.withOpacity(0.6),
-                        borderRadius: BorderRadius.circular(15),
-                        child: InkWell(
-                            splashColor: Colors.yellow,
-                            highlightColor: Colors.transparent,
-                            borderRadius: BorderRadius.circular(15),
-                            onTap: () {},
-                            child: SizedBox(
-                              width: 100.0,
-                              height: 70.0,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const FaIcon(FontAwesomeIcons.lemon,
-                                      color: Colors.white),
-                                  Center(
-                                    child: Text(
-                                      "Lemon",
-                                      style: GoogleFonts.overpass(
-                                          fontSize: 20.0, color: Colors.white),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(15),
-                      child: Material(
-                          color: Colors.green.withOpacity(0.6),
-                          borderRadius: BorderRadius.circular(15),
-                          child: InkWell(
-                            splashColor: Colors.green.withOpacity(0.7),
-                            borderRadius: BorderRadius.circular(15),
-                            highlightColor: Colors.transparent,
-                            onTap: () {},
-                            child: SizedBox(
-                              width: 100.0,
-                              height: 70.0,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const FaIcon(FontAwesomeIcons.leaf,
-                                      color: Colors.white),
-                                  Center(
-                                    child: Text(
-                                      "Leaf",
-                                      style: GoogleFonts.overpass(
-                                          fontSize: 20.0, color: Colors.white),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )),
-                    )
-                  ],
-                )),
+                color: Colors.black12, height: 100.0, child: ListView()),
           )
         ]);
       }),

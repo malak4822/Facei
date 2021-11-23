@@ -11,6 +11,8 @@ class PoseMaskPainter extends CustomPainter {
     required this.pose,
     required this.mask,
     required this.imageSize,
+    this.nosewidth,
+    this.noseheight,
   });
 
   final ui.Image? zdj;
@@ -34,9 +36,13 @@ class PoseMaskPainter extends CustomPainter {
     _paintPose(canvas, size);
 
     if (zdj != null) {
-      paintimage(canvas, zdj!, Offset(100, 100), 0.2);
+      paintimage(canvas, zdj!,
+          Offset(nosewidth.toDouble(), noseheight.toDouble()), 0.2);
     }
   }
+
+  var nosewidth;
+  var noseheight;
 
   void paintimage(
     ui.Canvas canvas,
@@ -77,12 +83,6 @@ class PoseMaskPainter extends CustomPainter {
 
     for (final part in pose!.landmarks) {
       // Landmark points
-      canvas.drawCircle(offsetForPart(part), 8, pointPaint);
-      if (part.type.isLeftSide) {
-        canvas.drawCircle(offsetForPart(part), 5, leftPointPaint);
-      } else if (part.type.isRightSide) {
-        canvas.drawCircle(offsetForPart(part), 5, rightPointPaint);
-      }
 
       // Landmark labels
       TextSpan span = TextSpan(

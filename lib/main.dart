@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:praktapp/cameragame.dart';
+import 'package:praktapp/camerapage2.dart';
 
 void main() {
   runApp(const MyApp());
@@ -52,11 +54,15 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [
             AnimatedContainer(
               duration: const Duration(milliseconds: 400),
-              width: selected1 ? 180.0 : 225.0,
+              width: selected1 ? 180.0 : 190.0,
               curve: Curves.fastOutSlowIn,
-              height: selected1 ? 360.0 : 450.0,
+              height: selected1 ? 360.0 : 400.0,
               child: ElevatedButton(
                 onPressed: () {
+                  if (selected1 == false) {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => CamPage()));
+                  }
                   setState(() {
                     selected1 = !selected1;
                   });
@@ -69,10 +75,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   if (selected4 == false) {
                     selected4 = true;
                   }
-                  if (selected1 == true) {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => CamPage()));
-                  }
                 },
                 child: Text(
                   "Let's play 1'st game",
@@ -82,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 style: ElevatedButton.styleFrom(
                   side: const BorderSide(color: Colors.white, width: 1),
-                  primary: Colors.black12,
+                  primary: Colors.black,
                   shape: const RoundedRectangleBorder(
                       borderRadius:
                           BorderRadius.only(bottomRight: Radius.circular(80))),
@@ -94,10 +96,16 @@ class _MyHomePageState extends State<MyHomePage> {
               child: AnimatedContainer(
                 curve: Curves.fastOutSlowIn,
                 duration: const Duration(milliseconds: 400),
-                width: selected2 ? 180.0 : 225.0,
-                height: selected2 ? 360 : 450.0,
+                width: selected2 ? 180.0 : 190.0,
+                height: selected2 ? 360 : 400.0,
                 child: ElevatedButton(
                   onPressed: () {
+                    if (selected2 == false) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const SecCamPage()));
+                    }
                     setState(() {
                       selected2 = !selected2;
                     });
@@ -118,7 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         fontSize: 31.0, color: Colors.white),
                   ),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.black12,
+                    primary: Colors.black,
                     side: const BorderSide(width: 1, color: Colors.white),
                     shape: const RoundedRectangleBorder(
                         borderRadius:
@@ -132,8 +140,8 @@ class _MyHomePageState extends State<MyHomePage> {
               child: AnimatedContainer(
                 curve: Curves.fastOutSlowIn,
                 duration: const Duration(milliseconds: 400),
-                width: selected3 ? 180.0 : 225.0,
-                height: selected3 ? 360.0 : 450.0,
+                width: selected3 ? 180.0 : 190.0,
+                height: selected3 ? 360.0 : 400.0,
                 child: ElevatedButton(
                   onPressed: () {
                     setState(() {
@@ -144,7 +152,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     }
                     if (selected2 == false) {
                       selected2 = true;
-                    } else if (selected4 == false) {
+                    }
+                    if (selected4 == false) {
                       selected4 = true;
                     }
                   },
@@ -155,7 +164,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         fontSize: 31.0, color: Colors.white),
                   ),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.black12,
+                    primary: Colors.black,
                     side: const BorderSide(width: 1, color: Colors.white),
                     shape: const RoundedRectangleBorder(
                         borderRadius:
@@ -168,11 +177,14 @@ class _MyHomePageState extends State<MyHomePage> {
               alignment: Alignment.bottomRight,
               child: AnimatedContainer(
                 curve: Curves.fastOutSlowIn,
-                width: selected4 ? 180.0 : 225.0,
-                height: selected4 ? 360.0 : 450.0,
+                width: selected4 ? 180.0 : 190.0,
+                height: selected4 ? 360.0 : 400.0,
                 duration: const Duration(milliseconds: 400),
                 child: ElevatedButton(
                   onPressed: () {
+                    if (selected4 == false) {
+                      SystemNavigator.pop();
+                    }
                     setState(() {
                       selected4 = !selected4;
                     });
@@ -188,7 +200,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: const Icon(Icons.exit_to_app,
                       size: 80, color: Colors.white),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.black12,
+                    primary: Colors.black,
                     side: const BorderSide(width: 1, color: Colors.white),
                     shape: const RoundedRectangleBorder(
                         borderRadius:
