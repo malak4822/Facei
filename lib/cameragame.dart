@@ -11,6 +11,8 @@ import 'dart:ui' as ui;
 import 'package:body_detection/body_detection.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:praktapp/secbgswitchpage.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import 'pose_mask_painter.dart';
 
@@ -27,29 +29,11 @@ class CamPage extends StatefulWidget {
   State<CamPage> createState() => _CamPageState();
 }
 
-class ZdjResult {
-  final Size rozm;
-
-  ZdjResult({
-    required this.rozm,
-  });
-
-  factory ZdjResult.fromMap(Map<dynamic, dynamic> map) => ZdjResult(
-      rozm: map['width'] != 20 && map['height'] != 20
-          ? Size(map['width'].toDouble(), map['height'].toDouble())
-          : Size.zero);
-}
-
 class _CamPageState extends State<CamPage> {
   ui.Image? zdj;
   ui.Image? nic;
-
-  bool _isAppleVis = false;
-  int _selectedTabIndex = 0;
-
+  bool _isObjectVis = false;
   bool _isDetectingPose = false;
-  bool _isDetectingBodyMask = false;
-
   Pose? _detectedPose;
   ui.Image? _maskImage;
   Image? _cameraImage;
@@ -65,12 +49,17 @@ class _CamPageState extends State<CamPage> {
           if (!_isDetectingPose) return;
           _handlePose(pose);
         },
-        onMaskAvailable: (mask) {
-          if (!_isDetectingBodyMask) return;
-          _handleBodyMask(mask);
-        },
       );
     }
+  }
+
+  void showObject() {
+    setState(() {
+      loadImage("img/apple.png");
+      if (_isDetectingPose == true) {
+        _isObjectVis = !_isObjectVis;
+      }
+    });
   }
 
   Future<void> _stopCameraStream() async {
@@ -103,49 +92,12 @@ class _CamPageState extends State<CamPage> {
     });
   }
 
-  void _handleZdjImage(ZdjResult rezultat) {
-    // Ignore callback if navigated out of the page.
-
-    // To avoid a memory leak issue.
-    // https://github.com/flutter/flutter/issues/60160
-    PaintingBinding.instance?.imageCache?.clear();
-    PaintingBinding.instance?.imageCache?.clearLiveImages();
-
-    setState(() {
-      zdjSize = rezultat.rozm;
-    });
-  }
-
   void _handlePose(Pose? pose) {
     // Ignore if navigated out of the page.
     if (!mounted) return;
 
     setState(() {
       _detectedPose = pose;
-    });
-  }
-
-  void _handleBodyMask(BodyMask? mask) {
-    // Ignore if navigated out of the page.
-    if (!mounted) return;
-
-    if (mask == null) {
-      setState(() {
-        _maskImage = null;
-      });
-      return;
-    }
-
-    final bytes = mask.buffer
-        .expand(
-          (it) => [0, 0, 0, (it * 230).toInt()],
-        )
-        .toList();
-    ui.decodeImageFromPixels(Uint8List.fromList(bytes), mask.width, mask.height,
-        ui.PixelFormat.rgba8888, (image) {
-      setState(() {
-        _maskImage = image;
-      });
     });
   }
 
@@ -162,48 +114,14 @@ class _CamPageState extends State<CamPage> {
     });
   }
 
-  Future<void> _toggleDetectBodyMask() async {
-    if (_isDetectingBodyMask) {
-      await BodyDetection.disableBodyMaskDetection();
-    } else {
-      await BodyDetection.enableBodyMaskDetection();
-    }
-
-    setState(() {
-      _isDetectingBodyMask = !_isDetectingBodyMask;
-      _maskImage = null;
-    });
-  }
-
-  void _onTabEnter(int index) {
-    // Camera tab
-    if (index == 1) {
-      _startCameraStream();
-    }
-  }
-
-  void _onTabExit(int index) {
-    // Camera tab
-    if (index == 1) {
-      _stopCameraStream();
-    }
-  }
-
-  void _onTabSelectTapped(int index) {
-    _onTabExit(_selectedTabIndex);
-    _onTabEnter(index);
-    _startCameraStream();
-
-    setState(() {
-      _selectedTabIndex = index;
-    });
-  }
-
   @override
   void initState() {
     super.initState();
 
+    loadImage("img/carrot.png");
     loadImage("img/apple.png");
+    loadImage("img/leaf.png");
+    loadImage("img/lemon.png");
   }
 
   Future loadImage(String path) async {
@@ -223,47 +141,52 @@ class _CamPageState extends State<CamPage> {
                 child: CustomPaint(
                   child: _cameraImage,
                   foregroundPainter: PoseMaskPainter(
-                    zdj: _isAppleVis ? zdj : nic,
+                    zdj: _isObjectVis ? zdj : nic,
                     pose: _detectedPose,
                     mask: _maskImage,
                     imageSize: _imageSize,
                   ),
                 ),
               ),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(primary: Colors.white),
-                  onPressed: () async {
-                    _startCameraStream();
-                  },
-                  child: Text(
-                    "Włącz kamerę",
-                    style: GoogleFonts.overpass(
-                        color: Colors.black, fontSize: 20.0),
-                  )),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(primary: Colors.white),
-                  onPressed: () async {
-                    _stopCameraStream();
-                  },
-                  child: Text(
-                    "Wyłącz kamerę",
-                    style: GoogleFonts.overpass(
-                        color: Colors.black, fontSize: 20.0),
-                  )),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(primary: Colors.white),
-                  onPressed: () async {
-                    if (_isAppleVis == true) {
-                      _isAppleVis = !_isAppleVis;
-                    }
-                    // _toggleDetectBodyMask();
-                    _toggleDetectPose();
-                  },
-                  child: Text(
-                    "Wyłącz / Wyłącz odk",
-                    style: GoogleFonts.overpass(
-                        color: Colors.black, fontSize: 20.0),
-                  )),
+              Wrap(
+                spacing: 10.0,
+                children: [
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(primary: Colors.white),
+                      onPressed: () async {
+                        _startCameraStream();
+                      },
+                      child: Text(
+                        "On cam",
+                        style: GoogleFonts.overpass(
+                            color: Colors.black, fontSize: 20.0),
+                      )),
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(primary: Colors.white),
+                      onPressed: () async {
+                        _stopCameraStream();
+                      },
+                      child: Text(
+                        "Off cam",
+                        style: GoogleFonts.overpass(
+                            color: Colors.black, fontSize: 20.0),
+                      )),
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(primary: Colors.white),
+                      onPressed: () async {
+                        if (_isObjectVis == true) {
+                          _isObjectVis = !_isObjectVis;
+                        }
+                        // _toggleDetectBodyMask();
+                        _toggleDetectPose();
+                      },
+                      child: Text(
+                        "Detectin'",
+                        style: GoogleFonts.overpass(
+                            color: Colors.black, fontSize: 20.0),
+                      )),
+                ],
+              )
             ],
           ),
         ),
@@ -272,156 +195,23 @@ class _CamPageState extends State<CamPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white38,
-      body: LayoutBuilder(builder: (context, constraints) {
-        return Stack(children: [
-          Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            _cameraDetectionView,
-          ]),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-                color: Colors.black12,
-                height: 100.0,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
+        backgroundColor: Colors.white38,
+        body: LayoutBuilder(builder: (context, constraints) {
+          return Scaffold(
+              body: SlidingUpPanel(
+            minHeight: 110,
+            body: Container(
+              color: Colors.black87,
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(15),
-                      child: Material(
-                        color: Colors.orange.withOpacity(0.5),
-                        borderRadius: BorderRadius.circular(15),
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(15),
-                          splashColor: Colors.orange,
-                          highlightColor: Colors.transparent,
-                          onTap: () {},
-                          child: SizedBox(
-                            width: 100.0,
-                            height: 70.0,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const FaIcon(
-                                  FontAwesomeIcons.carrot,
-                                  color: Colors.white,
-                                ),
-                                Center(
-                                  child: Text(
-                                    "Carrot",
-                                    style: GoogleFonts.overpass(
-                                        fontSize: 20.0, color: Colors.white),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(15),
-                      child: Material(
-                        color: Colors.red.withOpacity(0.5),
-                        borderRadius: BorderRadius.circular(15),
-                        child: InkWell(
-                          splashColor: Colors.red,
-                          highlightColor: Colors.transparent,
-                          borderRadius: BorderRadius.circular(15),
-                          onTap: () {
-                            setState(() {
-                              _handleZdjImage(ZdjResult(rozm: zdjSize));
-                              if (_isDetectingPose == true) {
-                                _isAppleVis = !_isAppleVis;
-                              }
-                            });
-                          },
-                          child: SizedBox(
-                            width: 100.0,
-                            height: 70.0,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const FaIcon(FontAwesomeIcons.appleAlt,
-                                    color: Colors.white),
-                                Center(
-                                  child: Text(
-                                    "Apple",
-                                    style: GoogleFonts.overpass(
-                                        fontSize: 20.0, color: Colors.white),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(15),
-                      child: Material(
-                        color: Colors.yellow.withOpacity(0.6),
-                        borderRadius: BorderRadius.circular(15),
-                        child: InkWell(
-                            splashColor: Colors.yellow,
-                            highlightColor: Colors.transparent,
-                            borderRadius: BorderRadius.circular(15),
-                            onTap: () {},
-                            child: SizedBox(
-                              width: 100.0,
-                              height: 70.0,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const FaIcon(FontAwesomeIcons.lemon,
-                                      color: Colors.white),
-                                  Center(
-                                    child: Text(
-                                      "Lemon",
-                                      style: GoogleFonts.overpass(
-                                          fontSize: 20.0, color: Colors.white),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(15),
-                      child: Material(
-                          color: Colors.green.withOpacity(0.6),
-                          borderRadius: BorderRadius.circular(15),
-                          child: InkWell(
-                            splashColor: Colors.green.withOpacity(0.7),
-                            borderRadius: BorderRadius.circular(15),
-                            highlightColor: Colors.transparent,
-                            onTap: () {},
-                            child: SizedBox(
-                              width: 100.0,
-                              height: 70.0,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const FaIcon(FontAwesomeIcons.leaf,
-                                      color: Colors.white),
-                                  Center(
-                                    child: Text(
-                                      "Leaf",
-                                      style: GoogleFonts.overpass(
-                                          fontSize: 20.0, color: Colors.white),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )),
-                    )
-                  ],
-                )),
-          )
-        ]);
-      }),
-    );
+                    _cameraDetectionView,
+                  ]),
+            ),
+            panelBuilder: (controller) => SecBgSwitchPage(
+              controller: controller,
+            ),
+          ));
+        }));
   }
 }

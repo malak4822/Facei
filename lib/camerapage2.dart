@@ -28,19 +28,6 @@ class SecCamPage extends StatefulWidget {
   State<SecCamPage> createState() => _SecCamPageState();
 }
 
-class ZdjResult {
-  final Size rozm;
-
-  ZdjResult({
-    required this.rozm,
-  });
-
-  factory ZdjResult.fromMap(Map<dynamic, dynamic> map) => ZdjResult(
-      rozm: map['width'] != 20 && map['height'] != 20
-          ? Size(map['width'].toDouble(), map['height'].toDouble())
-          : Size.zero);
-}
-
 class _SecCamPageState extends State<SecCamPage> {
   ui.Image? zdj;
   ui.Image? nic;
@@ -101,19 +88,6 @@ class _SecCamPageState extends State<SecCamPage> {
     setState(() {
       _cameraImage = image;
       _imageSize = result.size;
-    });
-  }
-
-  void _handleZdjImage(ZdjResult rezultat) {
-    // Ignore callback if navigated out of the page.
-
-    // To avoid a memory leak issue.
-    // https://github.com/flutter/flutter/issues/60160
-    PaintingBinding.instance?.imageCache?.clear();
-    PaintingBinding.instance?.imageCache?.clearLiveImages();
-
-    setState(() {
-      zdjSize = rezultat.rozm;
     });
   }
 
@@ -200,21 +174,6 @@ class _SecCamPageState extends State<SecCamPage> {
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-
-    loadImage("img/apple.png");
-  }
-
-  Future loadImage(String path) async {
-    final data = await rootBundle.load(path);
-    final bytes = data.buffer.asUint8List();
-    final zdj = await decodeImageFromList(bytes);
-
-    setState(() => this.zdj = zdj);
-  }
-
   Widget get _cameraDetectionView => SingleChildScrollView(
         child: Center(
           child: Column(
@@ -224,7 +183,6 @@ class _SecCamPageState extends State<SecCamPage> {
                 child: CustomPaint(
                   child: _cameraImage,
                   foregroundPainter: PoseMaskPainter(
-                    zdj: _isAppleVis ? zdj : nic,
                     pose: _detectedPose,
                     mask: _maskImage,
                     imageSize: _imageSize,
