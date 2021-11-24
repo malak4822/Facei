@@ -11,8 +11,6 @@ class PoseMaskPainter extends CustomPainter {
     required this.pose,
     required this.mask,
     required this.imageSize,
-    this.nosewidth,
-    this.noseheight,
   });
 
   final ui.Image? zdj;
@@ -34,15 +32,25 @@ class PoseMaskPainter extends CustomPainter {
   void paint(ui.Canvas canvas, Size size) {
     _paintMask(canvas, size);
     _paintPose(canvas, size);
+    final double hRatio =
+        imageSize.width == 0 ? 1 : size.width / imageSize.width;
+    final double vRatio =
+        imageSize.height == 0 ? 1 : size.height / imageSize.height;
+
+    offsetForPart(PoseLandmark part) =>
+        Offset(part.position.x * hRatio, part.position.y * vRatio);
 
     if (zdj != null) {
-      paintimage(canvas, zdj!,
-          Offset(nosewidth.toDouble(), noseheight.toDouble()), 0.2);
+      if (pose?.landmarks
+              .indexWhere((element) => element.type == PoseLandmarkType.nose) !=
+          -1) {
+        final landmark = pose?.landmarks.firstWhere(
+          (element) => element.type == PoseLandmarkType.nose,
+        );
+        paintimage(canvas, zdj!, offsetForPart(landmark!), 0.1);
+      }
     }
   }
-
-  var nosewidth;
-  var noseheight;
 
   void paintimage(
     ui.Canvas canvas,

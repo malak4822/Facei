@@ -4,7 +4,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:body_detection/models/image_result.dart';
 import 'package:body_detection/models/pose.dart';
 import 'package:body_detection/models/body_mask.dart';
-
+import 'package:praktapp/bgswitchpage.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
@@ -230,40 +231,44 @@ class _SecCamPageState extends State<SecCamPage> {
                   ),
                 ),
               ),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(primary: Colors.white),
-                  onPressed: () async {
-                    _startCameraStream();
-                  },
-                  child: Text(
-                    "Włącz kamerę",
-                    style: GoogleFonts.overpass(
-                        color: Colors.black, fontSize: 20.0),
-                  )),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(primary: Colors.white),
-                  onPressed: () async {
-                    _stopCameraStream();
-                  },
-                  child: Text(
-                    "Wyłącz kamerę",
-                    style: GoogleFonts.overpass(
-                        color: Colors.black, fontSize: 20.0),
-                  )),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(primary: Colors.white),
-                  onPressed: () async {
-                    if (_isAppleVis == true) {
-                      _isAppleVis = !_isAppleVis;
-                    }
-                    // _toggleDetectBodyMask();
-                    _toggleDetectPose();
-                  },
-                  child: Text(
-                    "Wyłącz / Wyłącz odk",
-                    style: GoogleFonts.overpass(
-                        color: Colors.black, fontSize: 20.0),
-                  )),
+              Wrap(
+                children: [
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(primary: Colors.white),
+                      onPressed: () async {
+                        _startCameraStream();
+                      },
+                      child: Text(
+                        "On Cam",
+                        style: GoogleFonts.overpass(
+                            color: Colors.black, fontSize: 20.0),
+                      )),
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(primary: Colors.white),
+                      onPressed: () async {
+                        _stopCameraStream();
+                      },
+                      child: Text(
+                        "Off Cam",
+                        style: GoogleFonts.overpass(
+                            color: Colors.black, fontSize: 20.0),
+                      )),
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(primary: Colors.white),
+                      onPressed: () async {
+                        if (_isAppleVis == true) {
+                          _isAppleVis = !_isAppleVis;
+                        }
+                        // _toggleDetectBodyMask();
+                        _toggleDetectPose();
+                      },
+                      child: Text(
+                        "Followin",
+                        style: GoogleFonts.overpass(
+                            color: Colors.black, fontSize: 20.0),
+                      )),
+                ],
+              )
             ],
           ),
         ),
@@ -271,19 +276,24 @@ class _SecCamPageState extends State<SecCamPage> {
 
   @override
   Widget build(BuildContext context) {
+    final panelHeightClosed = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white38,
       body: LayoutBuilder(builder: (context, constraints) {
-        return Stack(children: [
-          Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            _cameraDetectionView,
-          ]),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-                color: Colors.black12, height: 100.0, child: ListView()),
-          )
-        ]);
+        return Scaffold(
+            body: SlidingUpPanel(
+          minHeight: panelHeightClosed,
+          body: Container(
+            color: Colors.black87,
+            child:
+                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+              _cameraDetectionView,
+            ]),
+          ),
+          panelBuilder: (controller) => BgSwitchPage(
+            controller: controller,
+          ),
+        ));
       }),
     );
   }
