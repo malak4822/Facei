@@ -40,6 +40,15 @@ class _CamPageState extends State<CamPage> {
   Size _imageSize = Size.zero;
   Size zdjSize = Size.zero;
 
+  void essan() {
+    setState(() {
+      loadImage("img/carrot.png");
+      if (_isDetectingPose == true) {
+        _isObjectVis = !_isObjectVis;
+      }
+    });
+  }
+
   Future<void> _startCameraStream() async {
     final request = await Permission.camera.request();
     if (request.isGranted) {
@@ -51,15 +60,6 @@ class _CamPageState extends State<CamPage> {
         },
       );
     }
-  }
-
-  void showObject() {
-    setState(() {
-      loadImage("img/apple.png");
-      if (_isDetectingPose == true) {
-        _isObjectVis = !_isObjectVis;
-      }
-    });
   }
 
   Future<void> _stopCameraStream() async {
@@ -182,6 +182,14 @@ class _CamPageState extends State<CamPage> {
                       },
                       child: Text(
                         "Detectin'",
+                        style: GoogleFonts.overpass(
+                            color: Colors.black, fontSize: 20.0),
+                      )),
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(primary: Colors.white),
+                      onPressed: () {},
+                      child: Text(
+                        "japkooo",
                         style: GoogleFonts.overpass(
                             color: Colors.black, fontSize: 20.0),
                       )),

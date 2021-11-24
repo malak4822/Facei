@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-
-import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:praktapp/cameragame.dart';
 
 class SecBgSwitchPage extends StatefulWidget {
   const SecBgSwitchPage({Key? key, required ScrollController controller})
@@ -13,6 +12,8 @@ class SecBgSwitchPage extends StatefulWidget {
 }
 
 class _SecBgSwitchPageState extends State<SecBgSwitchPage> {
+  final CamPage es = const CamPage();
+
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
@@ -59,7 +60,9 @@ class _SecBgSwitchPageState extends State<SecBgSwitchPage> {
                           borderRadius: BorderRadius.circular(15),
                           splashColor: Colors.orange,
                           highlightColor: Colors.transparent,
-                          onTap: () {},
+                          onTap: () {
+                            () => es.essan();
+                          },
                           child: SizedBox(
                               width: 80.0,
                               height: 90.0,
