@@ -44,7 +44,6 @@ class _MyHomePageState extends State<MyHomePage> {
   bool selected3 = true;
   bool selected4 = true;
 
-  List<String> listazmiennych = ["sel1", "sel2", "sel3", "sel4"];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,8 +59,10 @@ class _MyHomePageState extends State<MyHomePage> {
               child: ElevatedButton(
                 onPressed: () {
                   if (selected1 == false) {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => CamPage()));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const CamPage()));
                   }
                   setState(() {
                     selected1 = !selected1;

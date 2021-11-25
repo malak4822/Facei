@@ -4,16 +4,25 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:praktapp/cameragame.dart';
 
 class SecBgSwitchPage extends StatefulWidget {
-  const SecBgSwitchPage({Key? key, required ScrollController controller})
-      : super(key: key);
+  SecBgSwitchPage({
+    Key? key,
+    required ScrollController controller,
+    required this.buttoncallback1,
+    required this.buttoncallback2,
+    required this.buttoncallback3,
+    required this.buttoncallback4,
+  }) : super(key: key);
 
   @override
   _SecBgSwitchPageState createState() => _SecBgSwitchPageState();
+
+  final buttoncallback1;
+  final buttoncallback2;
+  final buttoncallback3;
+  final buttoncallback4;
 }
 
 class _SecBgSwitchPageState extends State<SecBgSwitchPage> {
-  final CamPage es = const CamPage();
-
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
@@ -61,7 +70,7 @@ class _SecBgSwitchPageState extends State<SecBgSwitchPage> {
                           splashColor: Colors.orange,
                           highlightColor: Colors.transparent,
                           onTap: () {
-                            () => es.essan();
+                            widget.buttoncallback1();
                           },
                           child: SizedBox(
                               width: 80.0,
@@ -90,7 +99,9 @@ class _SecBgSwitchPageState extends State<SecBgSwitchPage> {
                           splashColor: Colors.red,
                           highlightColor: Colors.transparent,
                           borderRadius: BorderRadius.circular(15),
-                          onTap: () {},
+                          onTap: () {
+                            widget.buttoncallback2();
+                          },
                           child: SizedBox(
                               width: 80.0,
                               height: 90.0,
@@ -118,7 +129,9 @@ class _SecBgSwitchPageState extends State<SecBgSwitchPage> {
                           splashColor: Colors.yellow,
                           highlightColor: Colors.transparent,
                           borderRadius: BorderRadius.circular(15),
-                          onTap: () {},
+                          onTap: () {
+                            widget.buttoncallback3();
+                          },
                           child: SizedBox(
                               width: 80.0,
                               height: 90.0,
@@ -146,7 +159,9 @@ class _SecBgSwitchPageState extends State<SecBgSwitchPage> {
                           splashColor: Colors.green.withOpacity(0.7),
                           borderRadius: BorderRadius.circular(15),
                           highlightColor: Colors.transparent,
-                          onTap: () {},
+                          onTap: () {
+                            widget.buttoncallback4();
+                          },
                           child: SizedBox(
                               width: 80.0,
                               height: 90.0,

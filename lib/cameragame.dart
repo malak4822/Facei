@@ -40,9 +40,36 @@ class _CamPageState extends State<CamPage> {
   Size _imageSize = Size.zero;
   Size zdjSize = Size.zero;
 
-  void essan() {
+  void essan1() {
     setState(() {
       loadImage("img/carrot.png");
+      if (_isDetectingPose == true) {
+        _isObjectVis = !_isObjectVis;
+      }
+    });
+  }
+
+  void essan2() {
+    setState(() {
+      loadImage("img/apple.png");
+      if (_isDetectingPose == true) {
+        _isObjectVis = !_isObjectVis;
+      }
+    });
+  }
+
+  void essan3() {
+    setState(() {
+      loadImage("img/lemon.png");
+      if (_isDetectingPose == true) {
+        _isObjectVis = !_isObjectVis;
+      }
+    });
+  }
+
+  void essan4() {
+    setState(() {
+      loadImage("img/leaf.png");
       if (_isDetectingPose == true) {
         _isObjectVis = !_isObjectVis;
       }
@@ -114,14 +141,20 @@ class _CamPageState extends State<CamPage> {
     });
   }
 
+  List<String> vegtbls = [
+    "carrot",
+    "apple.png",
+    "leaf.png",
+    "lemon.png",
+  ];
   @override
   void initState() {
     super.initState();
 
-    loadImage("img/carrot.png");
-    loadImage("img/apple.png");
-    loadImage("img/leaf.png");
-    loadImage("img/lemon.png");
+    loadImage("img/${vegtbls[0]}.png");
+    loadImage("img/${vegtbls[1]}.png");
+    loadImage("img/${vegtbls[2]}.png");
+    loadImage("img/${vegtbls[3]}.png");
   }
 
   Future loadImage(String path) async {
@@ -181,15 +214,7 @@ class _CamPageState extends State<CamPage> {
                         _toggleDetectPose();
                       },
                       child: Text(
-                        "Detectin'",
-                        style: GoogleFonts.overpass(
-                            color: Colors.black, fontSize: 20.0),
-                      )),
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(primary: Colors.white),
-                      onPressed: () {},
-                      child: Text(
-                        "japkooo",
+                        "Wyłącz Efekty",
                         style: GoogleFonts.overpass(
                             color: Colors.black, fontSize: 20.0),
                       )),
@@ -218,6 +243,10 @@ class _CamPageState extends State<CamPage> {
             ),
             panelBuilder: (controller) => SecBgSwitchPage(
               controller: controller,
+              buttoncallback1: essan1,
+              buttoncallback2: essan2,
+              buttoncallback3: essan3,
+              buttoncallback4: essan4,
             ),
           ));
         }));

@@ -30,8 +30,6 @@ class PoseMaskPainter extends CustomPainter {
 
   @override
   void paint(ui.Canvas canvas, Size size) {
-    _paintMask(canvas, size);
-    _paintPose(canvas, size);
     final double hRatio =
         imageSize.width == 0 ? 1 : size.width / imageSize.width;
     final double vRatio =
@@ -68,43 +66,6 @@ class PoseMaskPainter extends CustomPainter {
         Rect.fromLTRB(left + centrum.dx, top + centrum.dy, right + centrum.dx,
             bottom + centrum.dy),
         Paint());
-  }
-
-  void _paintPose(Canvas canvas, Size size) {
-    if (pose == null) return;
-
-    final double hRatio =
-        imageSize.width == 0 ? 1 : size.width / imageSize.width;
-    final double vRatio =
-        imageSize.height == 0 ? 1 : size.height / imageSize.height;
-
-    offsetForPart(PoseLandmark part) =>
-        Offset(part.position.x * hRatio, part.position.y * vRatio);
-
-    // Landmark connections
-    final landmarksByType = {for (final it in pose!.landmarks) it.type: it};
-    for (final connection in connections) {
-      final point1 = offsetForPart(landmarksByType[connection[0]]!);
-      final point2 = offsetForPart(landmarksByType[connection[1]]!);
-      canvas.drawLine(point1, point2, linePaint);
-    }
-
-    for (final part in pose!.landmarks) {
-      // Landmark points
-
-      // Landmark labels
-      TextSpan span = TextSpan(
-        text: part.type.toString().substring(16),
-        style: const TextStyle(
-          color: Color.fromRGBO(197, 255, 175, 1),
-          fontSize: 10,
-        ),
-      );
-      TextPainter tp = TextPainter(text: span, textAlign: TextAlign.left);
-      tp.textDirection = TextDirection.ltr;
-      tp.layout();
-      tp.paint(canvas, offsetForPart(part));
-    }
   }
 
   void _paintMask(Canvas canvas, Size size) {
