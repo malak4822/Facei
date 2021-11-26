@@ -124,19 +124,6 @@ class _SecCamPageState extends State<SecCamPage> {
     });
   }
 
-  Future<void> _toggleDetectPose() async {
-    if (_isDetectingPose) {
-      await BodyDetection.disablePoseDetection();
-    } else {
-      await BodyDetection.enablePoseDetection();
-    }
-
-    setState(() {
-      _isDetectingPose = !_isDetectingPose;
-      _detectedPose = null;
-    });
-  }
-
   Future<void> _toggleDetectBodyMask() async {
     if (_isDetectingBodyMask) {
       await BodyDetection.disableBodyMaskDetection();
@@ -147,30 +134,6 @@ class _SecCamPageState extends State<SecCamPage> {
     setState(() {
       _isDetectingBodyMask = !_isDetectingBodyMask;
       _maskImage = null;
-    });
-  }
-
-  void _onTabEnter(int index) {
-    // Camera tab
-    if (index == 1) {
-      _startCameraStream();
-    }
-  }
-
-  void _onTabExit(int index) {
-    // Camera tab
-    if (index == 1) {
-      _stopCameraStream();
-    }
-  }
-
-  void _onTabSelectTapped(int index) {
-    _onTabExit(_selectedTabIndex);
-    _onTabEnter(index);
-    _startCameraStream();
-
-    setState(() {
-      _selectedTabIndex = index;
     });
   }
 
@@ -217,8 +180,7 @@ class _SecCamPageState extends State<SecCamPage> {
                         if (_isAppleVis == true) {
                           _isAppleVis = !_isAppleVis;
                         }
-                        // _toggleDetectBodyMask();
-                        _toggleDetectPose();
+                        _toggleDetectBodyMask();
                       },
                       child: Text(
                         "Followin",
@@ -234,13 +196,12 @@ class _SecCamPageState extends State<SecCamPage> {
 
   @override
   Widget build(BuildContext context) {
-    final panelHeightClosed = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white38,
       body: LayoutBuilder(builder: (context, constraints) {
         return Scaffold(
             body: SlidingUpPanel(
-          minHeight: panelHeightClosed,
+          minHeight: 110,
           body: Container(
             color: Colors.black87,
             child:
