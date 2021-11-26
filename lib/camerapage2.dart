@@ -1,9 +1,13 @@
+import 'dart:io';
 import 'dart:typed_data';
+import 'package:body_detection/models/body_mask.dart';
+import 'package:body_detection/png_image.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:body_detection/models/image_result.dart';
 import 'package:body_detection/models/pose.dart';
-import 'package:body_detection/models/body_mask.dart';
+
 import 'package:praktapp/bgswitchpage.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:flutter/material.dart';
@@ -31,18 +35,49 @@ class SecCamPage extends StatefulWidget {
 class _SecCamPageState extends State<SecCamPage> {
   ui.Image? zdj;
   ui.Image? nic;
+  ui.Image? tlo;
 
   bool _isAppleVis = false;
-  int _selectedTabIndex = 0;
-
-  bool _isDetectingPose = false;
-  bool _isDetectingBodyMask = false;
-
   Pose? _detectedPose;
+  bool _isDetectingBodyMask = false;
+  bool _isDetectingPose = false;
   ui.Image? _maskImage;
   Image? _cameraImage;
   Size _imageSize = Size.zero;
   Size zdjSize = Size.zero;
+  bool _detectedMask = false;
+  Image? _selectedImage;
+
+  Future<void> _selectImage() async {
+    FilePickerResult? result =
+        await FilePicker.platform.pickFiles(type: FileType.image);
+    if (result == null || result.files.isEmpty) return;
+    final path = result.files.single.path;
+    if (path != null) {
+      _resetState();
+      setState(() {
+        _selectedImage = Image.file(File(path));
+      });
+    }
+  }
+
+  void _resetState() {
+    setState(() {
+      _maskImage = null;
+      _detectedPose = null;
+      _imageSize = Size.zero;
+    });
+  }
+
+  Future<void> _detectImageBodyMask() async {
+    PngImage? pngImage = await _selectedImage?.toPngImage();
+    if (pngImage == null) return;
+    setState(() {
+      _imageSize = Size(pngImage.width.toDouble(), pngImage.height.toDouble());
+    });
+    final mask = await BodyDetection.detectBodyMask(image: pngImage);
+    _handleBodyMask(mask);
+  }
 
   Future<void> _startCameraStream() async {
     final request = await Permission.camera.request();
@@ -59,6 +94,49 @@ class _SecCamPageState extends State<SecCamPage> {
         },
       );
     }
+  }
+
+  void _handlePose(Pose? pose) {
+    // Ignore if navigated out of the page.
+    if (!mounted) return;
+
+    setState(() {
+      _detectedPose = pose;
+    });
+  }
+
+  Future<void> _detectImagePose() async {
+    PngImage? pngImage = await _selectedImage?.toPngImage();
+    if (pngImage == null) return;
+    setState(() {
+      _imageSize = Size(pngImage.width.toDouble(), pngImage.height.toDouble());
+    });
+    final pose = await BodyDetection.detectPose(image: pngImage);
+    _handlePose(pose);
+  }
+
+  void _handleBodyMask(BodyMask? mask) {
+    // Ignore if navigated out of the page.
+    if (!mounted) return;
+
+    if (mask == null) {
+      setState(() {
+        _maskImage = null;
+      });
+      return;
+    }
+
+    final bytes = mask.buffer
+        .expand(
+          (it) => [0, 0, 0, (it * 255).toInt()],
+        )
+        .toList();
+    ui.decodeImageFromPixels(Uint8List.fromList(bytes), mask.width, mask.height,
+        ui.PixelFormat.rgba8888, (image) {
+      setState(() {
+        _maskImage = image;
+      });
+    });
   }
 
   Future<void> _stopCameraStream() async {
@@ -91,39 +169,6 @@ class _SecCamPageState extends State<SecCamPage> {
     });
   }
 
-  void _handlePose(Pose? pose) {
-    // Ignore if navigated out of the page.
-    if (!mounted) return;
-
-    setState(() {
-      _detectedPose = pose;
-    });
-  }
-
-  void _handleBodyMask(BodyMask? mask) {
-    // Ignore if navigated out of the page.
-    if (!mounted) return;
-
-    if (mask == null) {
-      setState(() {
-        _maskImage = null;
-      });
-      return;
-    }
-
-    final bytes = mask.buffer
-        .expand(
-          (it) => [0, 0, 0, (it * 230).toInt()],
-        )
-        .toList();
-    ui.decodeImageFromPixels(Uint8List.fromList(bytes), mask.width, mask.height,
-        ui.PixelFormat.rgba8888, (image) {
-      setState(() {
-        _maskImage = image;
-      });
-    });
-  }
-
   Future<void> _toggleDetectBodyMask() async {
     if (_isDetectingBodyMask) {
       await BodyDetection.disableBodyMaskDetection();
@@ -149,15 +194,18 @@ class _SecCamPageState extends State<SecCamPage> {
                     pose: _detectedPose,
                     mask: _maskImage,
                     imageSize: _imageSize,
+                    tlo: tlo,
                   ),
                 ),
               ),
               Wrap(
+                spacing: 10.0,
                 children: [
                   ElevatedButton(
                       style: ElevatedButton.styleFrom(primary: Colors.white),
-                      onPressed: () async {
+                      onPressed: () {
                         _startCameraStream();
+                        _detectImageBodyMask();
                       },
                       child: Text(
                         "On Cam",
@@ -175,18 +223,21 @@ class _SecCamPageState extends State<SecCamPage> {
                             color: Colors.black, fontSize: 20.0),
                       )),
                   ElevatedButton(
-                      style: ElevatedButton.styleFrom(primary: Colors.white),
-                      onPressed: () async {
-                        if (_isAppleVis == true) {
-                          _isAppleVis = !_isAppleVis;
-                        }
-                        _toggleDetectBodyMask();
-                      },
-                      child: Text(
-                        "Followin",
-                        style: GoogleFonts.overpass(
-                            color: Colors.black, fontSize: 20.0),
-                      )),
+                    style: ElevatedButton.styleFrom(primary: Colors.white),
+                    onPressed: () async {
+                      if (_isAppleVis == true) {
+                        _isAppleVis = !_isAppleVis;
+                      }
+                      _toggleDetectBodyMask();
+                    },
+                    child: _isDetectingBodyMask
+                        ? Text(
+                            'Turn off body mask detection',
+                            style: GoogleFonts.overpass(color: Colors.black),
+                          )
+                        : Text('Turn on body mask detection',
+                            style: GoogleFonts.overpass(color: Colors.black)),
+                  ),
                 ],
               )
             ],

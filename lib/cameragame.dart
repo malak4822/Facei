@@ -40,6 +40,16 @@ class _CamPageState extends State<CamPage> {
   Size _imageSize = Size.zero;
   Size zdjSize = Size.zero;
 
+  @override
+  void initState() {
+    super.initState();
+
+    loadImage("img/carrot.png");
+    loadImage("img/apple.png");
+    loadImage("img/leaf.png");
+    loadImage("img/lemon.png");
+  }
+
   void essan1() {
     setState(() {
       loadImage("img/carrot.png");
@@ -139,22 +149,6 @@ class _CamPageState extends State<CamPage> {
       _isDetectingPose = !_isDetectingPose;
       _detectedPose = null;
     });
-  }
-
-  List<String> vegtbls = [
-    "carrot",
-    "apple.png",
-    "leaf.png",
-    "lemon.png",
-  ];
-  @override
-  void initState() {
-    super.initState();
-
-    loadImage("img/${vegtbls[0]}.png");
-    loadImage("img/${vegtbls[1]}.png");
-    loadImage("img/${vegtbls[2]}.png");
-    loadImage("img/${vegtbls[3]}.png");
   }
 
   Future loadImage(String path) async {

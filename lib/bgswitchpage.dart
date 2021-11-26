@@ -1,9 +1,12 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class BgSwitchPage extends StatelessWidget {
-  const BgSwitchPage({Key? key, required this.controller}) : super(key: key);
+  const BgSwitchPage({Key? key, required this.controller, Image? backgrnd})
+      : super(key: key);
   final ScrollController controller;
 
   @override
