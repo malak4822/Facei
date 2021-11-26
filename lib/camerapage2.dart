@@ -37,6 +37,7 @@ class _SecCamPageState extends State<SecCamPage> {
   ui.Image? nic;
   ui.Image? tlo;
 
+  bool turnin = false;
   bool _isAppleVis = false;
   Pose? _detectedPose;
   bool _isDetectingBodyMask = false;
@@ -191,10 +192,9 @@ class _SecCamPageState extends State<SecCamPage> {
                 child: CustomPaint(
                   child: _cameraImage,
                   foregroundPainter: PoseMaskPainter(
-                    pose: _detectedPose,
+                    turnin: turnin,
                     mask: _maskImage,
                     imageSize: _imageSize,
-                    tlo: tlo,
                   ),
                 ),
               ),
@@ -205,7 +205,6 @@ class _SecCamPageState extends State<SecCamPage> {
                       style: ElevatedButton.styleFrom(primary: Colors.white),
                       onPressed: () {
                         _startCameraStream();
-                        _detectImageBodyMask();
                       },
                       child: Text(
                         "On Cam",
@@ -225,9 +224,7 @@ class _SecCamPageState extends State<SecCamPage> {
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(primary: Colors.white),
                     onPressed: () async {
-                      if (_isAppleVis == true) {
-                        _isAppleVis = !_isAppleVis;
-                      }
+                      turnin = !turnin;
                       _toggleDetectBodyMask();
                     },
                     child: _isDetectingBodyMask

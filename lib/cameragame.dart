@@ -32,10 +32,11 @@ class CamPage extends StatefulWidget {
 class _CamPageState extends State<CamPage> {
   ui.Image? zdj;
   ui.Image? nic;
+
   bool _isObjectVis = false;
   bool _isDetectingPose = false;
   Pose? _detectedPose;
-  ui.Image? _maskImage;
+
   Image? _cameraImage;
   Size _imageSize = Size.zero;
   Size zdjSize = Size.zero;
@@ -170,7 +171,6 @@ class _CamPageState extends State<CamPage> {
                   foregroundPainter: PoseMaskPainter(
                     zdj: _isObjectVis ? zdj : nic,
                     pose: _detectedPose,
-                    mask: _maskImage,
                     imageSize: _imageSize,
                   ),
                 ),

@@ -7,14 +7,14 @@ import 'package:body_detection/models/pose_landmark_type.dart';
 
 class PoseMaskPainter extends CustomPainter {
   PoseMaskPainter({
-    this.tlo,
     this.zdj,
     this.pose,
     this.mask,
     required this.imageSize,
+    this.turnin,
   });
 
-  final ui.Image? tlo;
+  bool? turnin = false;
   final ui.Image? zdj;
   final Pose? pose;
   final ui.Image? mask;
@@ -28,15 +28,20 @@ class PoseMaskPainter extends CustomPainter {
     ..color = const Color.fromRGBO(255, 255, 255, 0.9)
     ..strokeWidth = 3;
 
-  final maskPaint = Paint()..imageFilter;
+  final maskPaint = Paint()
+    ..colorFilter = const ColorFilter.mode(
+        Color.fromRGBO(197, 108, 175, 0.6), BlendMode.srcOut);
 
   @override
   void paint(ui.Canvas canvas, Size size) {
-    canvas.drawImageRect(
-        mask!,
-        Rect.fromLTWH(0, 0, mask!.width.toDouble(), mask!.height.toDouble()),
-        Rect.fromLTWH(0, 0, size.width, size.height),
-        maskPaint);
+    if (turnin == true) {
+      canvas.drawImageRect(
+          mask!,
+          Rect.fromLTWH(0, 0, mask!.width.toDouble(), mask!.height.toDouble()),
+          Rect.fromLTWH(0, 0, size.width, size.height),
+          maskPaint);
+    }
+
     final double hRatio =
         imageSize.width == 0 ? 1 : size.width / imageSize.width;
     final double vRatio =
