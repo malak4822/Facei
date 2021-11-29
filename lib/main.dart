@@ -41,7 +41,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   bool selected1 = true;
   bool selected2 = true;
-  bool selected3 = true;
   bool selected4 = true;
 
   @override
@@ -53,9 +52,13 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [
             AnimatedContainer(
               duration: const Duration(milliseconds: 400),
-              width: selected1 ? 180.0 : 190.0,
+              width: selected1
+                  ? MediaQuery.of(context).size.width * 0.45
+                  : MediaQuery.of(context).size.width * 0.5,
+              height: selected1
+                  ? MediaQuery.of(context).size.height * 0.5
+                  : MediaQuery.of(context).size.height * 0.7,
               curve: Curves.fastOutSlowIn,
-              height: selected1 ? 360.0 : 400.0,
               child: ElevatedButton(
                 onPressed: () {
                   if (selected1 == false) {
@@ -70,18 +73,22 @@ class _MyHomePageState extends State<MyHomePage> {
                   if (selected2 == false) {
                     selected2 = true;
                   }
-                  if (selected3 == false) {
-                    selected3 = true;
-                  }
+
                   if (selected4 == false) {
                     selected4 = true;
                   }
                 },
-                child: Text(
-                  "Let's play 1'st game",
-                  textAlign: TextAlign.center,
-                  style:
-                      GoogleFonts.overpass(fontSize: 31.0, color: Colors.white),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Add some effects on face",
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.overpass(
+                          fontSize: 29.0, color: Colors.white),
+                    ),
+                    const Icon(Icons.face, size: 80.0, color: Colors.white)
+                  ],
                 ),
                 style: ElevatedButton.styleFrom(
                   side: const BorderSide(color: Colors.white, width: 1),
@@ -97,8 +104,12 @@ class _MyHomePageState extends State<MyHomePage> {
               child: AnimatedContainer(
                 curve: Curves.fastOutSlowIn,
                 duration: const Duration(milliseconds: 400),
-                width: selected2 ? 180.0 : 190.0,
-                height: selected2 ? 360 : 400.0,
+                width: selected2
+                    ? MediaQuery.of(context).size.width * 0.45
+                    : MediaQuery.of(context).size.width * 0.5,
+                height: selected2
+                    ? MediaQuery.of(context).size.height * 0.5
+                    : MediaQuery.of(context).size.height * 0.7,
                 child: ElevatedButton(
                   onPressed: () {
                     if (selected2 == false) {
@@ -113,18 +124,22 @@ class _MyHomePageState extends State<MyHomePage> {
                     if (selected1 == false) {
                       selected1 = true;
                     }
-                    if (selected3 == false) {
-                      selected3 = true;
-                    }
+
                     if (selected4 == false) {
                       selected4 = true;
                     }
                   },
-                  child: Text(
-                    "Let's play 2'nd game",
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.overpass(
-                        fontSize: 31.0, color: Colors.white),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Swap your background",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.overpass(
+                            fontSize: 29.0, color: Colors.white),
+                      ),
+                      const Icon(Icons.image, size: 80.0, color: Colors.white)
+                    ],
                   ),
                   style: ElevatedButton.styleFrom(
                     primary: Colors.black,
@@ -137,49 +152,13 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             Align(
-              alignment: Alignment.bottomLeft,
-              child: AnimatedContainer(
-                curve: Curves.fastOutSlowIn,
-                duration: const Duration(milliseconds: 400),
-                width: selected3 ? 180.0 : 190.0,
-                height: selected3 ? 360.0 : 400.0,
-                child: ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      selected3 = !selected3;
-                    });
-                    if (selected1 == false) {
-                      selected1 = true;
-                    }
-                    if (selected2 == false) {
-                      selected2 = true;
-                    }
-                    if (selected4 == false) {
-                      selected4 = true;
-                    }
-                  },
-                  child: Text(
-                    "Let's read the rules",
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.overpass(
-                        fontSize: 31.0, color: Colors.white),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.black,
-                    side: const BorderSide(width: 1, color: Colors.white),
-                    shape: const RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.only(topRight: Radius.circular(80))),
-                  ),
-                ),
-              ),
-            ),
-            Align(
               alignment: Alignment.bottomRight,
               child: AnimatedContainer(
                 curve: Curves.fastOutSlowIn,
-                width: selected4 ? 180.0 : 190.0,
-                height: selected4 ? 360.0 : 400.0,
+                width: MediaQuery.of(context).size.width,
+                height: selected4
+                    ? MediaQuery.of(context).size.height * 0.2
+                    : MediaQuery.of(context).size.height * 0.2 * 2,
                 duration: const Duration(milliseconds: 400),
                 child: ElevatedButton(
                   onPressed: () {
@@ -194,8 +173,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     }
                     if (selected2 == false) {
                       selected2 = true;
-                    } else if (selected3 == false) {
-                      selected3 = true;
                     }
                   },
                   child: const Icon(Icons.exit_to_app,
@@ -204,8 +181,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     primary: Colors.black,
                     side: const BorderSide(width: 1, color: Colors.white),
                     shape: const RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.only(topLeft: Radius.circular(80))),
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(80),
+                            topRight: Radius.circular(80))),
                   ),
                 ),
               ),

@@ -39,7 +39,6 @@ class _CamPageState extends State<CamPage> {
 
   Image? _cameraImage;
   Size _imageSize = Size.zero;
-  Size zdjSize = Size.zero;
 
   @override
   void initState() {

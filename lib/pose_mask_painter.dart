@@ -8,40 +8,35 @@ import 'package:body_detection/models/pose_landmark_type.dart';
 class PoseMaskPainter extends CustomPainter {
   PoseMaskPainter({
     this.zdj,
+    this.tlo,
     this.pose,
     this.mask,
     required this.imageSize,
     this.turnin,
+    ui.Image? background,
   });
 
-  bool? turnin = false;
+  final ui.Image? tlo;
   final ui.Image? zdj;
+  bool? turnin = false;
   final Pose? pose;
   final ui.Image? mask;
   final Size imageSize;
-  final pointPaint = Paint()..color = const Color.fromRGBO(0, 0, 0, 1);
-  final circlePaint = Paint()..color = const Color.fromRGBO(0, 255, 0, 0.8);
-  final leftPointPaint = Paint()..color = const Color.fromRGBO(40, 245, 200, 1);
-  final rightPointPaint = Paint()
-    ..color = const Color.fromRGBO(100, 208, 218, 1);
-  final linePaint = Paint()
-    ..color = const Color.fromRGBO(255, 255, 255, 0.9)
-    ..strokeWidth = 3;
 
-  final maskPaint = Paint()
-    ..colorFilter = const ColorFilter.mode(
-        Color.fromRGBO(197, 108, 175, 0.6), BlendMode.srcOut);
+  final circlePaint = Paint()..color = const Color.fromRGBO(0, 255, 0, 0.8);
+
+  final maskPaint = Paint()..shader;
 
   @override
   void paint(ui.Canvas canvas, Size size) {
     if (turnin == true) {
+      paintBackgroundimage(canvas, tlo!, const ui.Offset(0, 0), 0.25);
       canvas.drawImageRect(
           mask!,
           Rect.fromLTWH(0, 0, mask!.width.toDouble(), mask!.height.toDouble()),
           Rect.fromLTWH(0, 0, size.width, size.height),
           maskPaint);
-    }
-
+    } else {}
     final double hRatio =
         imageSize.width == 0 ? 1 : size.width / imageSize.width;
     final double vRatio =
@@ -53,9 +48,6 @@ class PoseMaskPainter extends CustomPainter {
     for (final part in pose!.landmarks) {
       // Draw a circular indicator for the landmark.
       canvas.drawCircle(offsetForPart(part), 5, circlePaint);
-
-      // Draw text label for the landmark.
-
     }
 
     if (zdj != null) {
@@ -70,12 +62,22 @@ class PoseMaskPainter extends CustomPainter {
     }
   }
 
+  void paintBackgroundimage(
+      ui.Canvas canvas, ui.Image image, Offset centrum, double skala) {
+    final double left = -1 / 2 * image.width * skala;
+    final double top = -1 / 2 * image.height * skala;
+    final double right = 1 / 2 * image.width * skala;
+    final double bottom = 1 / 2 * image.height * skala;
+    canvas.drawImageRect(
+        image,
+        Rect.fromLTRB(0, 0, image.width.toDouble(), image.height.toDouble()),
+        Rect.fromLTRB(left + centrum.dx, top + centrum.dy, right + centrum.dx,
+            bottom + centrum.dy),
+        Paint());
+  }
+
   void paintimage(
-    ui.Canvas canvas,
-    ui.Image image,
-    Offset centrum,
-    double skala,
-  ) {
+      ui.Canvas canvas, ui.Image image, Offset centrum, double skala) {
     final double left = -1 / 2 * image.width * skala;
     final double top = -1 / 2 * image.height * skala;
     final double right = 1 / 2 * image.width * skala;

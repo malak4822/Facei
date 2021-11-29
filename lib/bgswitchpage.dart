@@ -4,22 +4,26 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class BgSwitchPage extends StatelessWidget {
-  const BgSwitchPage({Key? key, required this.controller, Image? backgrnd})
-      : super(key: key);
+class BgSwitchPage extends StatefulWidget {
+  const BgSwitchPage({
+    Key? key,
+    required this.controller,
+    required this.bckgrnd,
+  }) : super(key: key);
   final ScrollController controller;
 
   @override
-  Widget build(BuildContext context) {
-    return ListView(
-      controller: controller,
-      padding: EdgeInsets.zero,
-      children: [buildAboutText(), const SizedBox(height: 20)],
-    );
-  }
+  State<BgSwitchPage> createState() => _BgSwitchPageState();
+
+  final bckgrnd;
 }
 
-Widget buildAboutText() => Column(
+class _BgSwitchPageState extends State<BgSwitchPage> {
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      controller: widget.controller,
+      padding: EdgeInsets.zero,
       children: [
         Container(
             color: Colors.black87,
@@ -65,7 +69,9 @@ Widget buildAboutText() => Column(
                             borderRadius: BorderRadius.circular(15),
                             splashColor: Colors.blue,
                             highlightColor: Colors.transparent,
-                            onTap: () {},
+                            onTap: () {
+                              widget.bckgrnd();
+                            },
                             child: SizedBox(
                                 width: 80.0,
                                 height: 90.0,
@@ -176,3 +182,7 @@ Widget buildAboutText() => Column(
             ))
       ],
     );
+  }
+}
+
+Widget buildAboutText() => Column();

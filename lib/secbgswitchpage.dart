@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:praktapp/cameragame.dart';
 
 class SecBgSwitchPage extends StatefulWidget {
-  SecBgSwitchPage({
+  const SecBgSwitchPage({
     Key? key,
     required ScrollController controller,
     required this.buttoncallback1,

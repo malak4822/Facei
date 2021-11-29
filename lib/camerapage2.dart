@@ -33,20 +33,14 @@ class SecCamPage extends StatefulWidget {
 }
 
 class _SecCamPageState extends State<SecCamPage> {
-  ui.Image? zdj;
   ui.Image? nic;
   ui.Image? tlo;
 
   bool turnin = false;
-  bool _isAppleVis = false;
-  Pose? _detectedPose;
   bool _isDetectingBodyMask = false;
-  bool _isDetectingPose = false;
   ui.Image? _maskImage;
   Image? _cameraImage;
   Size _imageSize = Size.zero;
-  Size zdjSize = Size.zero;
-  bool _detectedMask = false;
   Image? _selectedImage;
 
   Future<void> _selectImage() async {
@@ -65,7 +59,6 @@ class _SecCamPageState extends State<SecCamPage> {
   void _resetState() {
     setState(() {
       _maskImage = null;
-      _detectedPose = null;
       _imageSize = Size.zero;
     });
   }
@@ -85,35 +78,12 @@ class _SecCamPageState extends State<SecCamPage> {
     if (request.isGranted) {
       await BodyDetection.startCameraStream(
         onFrameAvailable: _handleCameraImage,
-        onPoseAvailable: (pose) {
-          if (!_isDetectingPose) return;
-          _handlePose(pose);
-        },
         onMaskAvailable: (mask) {
           if (!_isDetectingBodyMask) return;
           _handleBodyMask(mask);
         },
       );
     }
-  }
-
-  void _handlePose(Pose? pose) {
-    // Ignore if navigated out of the page.
-    if (!mounted) return;
-
-    setState(() {
-      _detectedPose = pose;
-    });
-  }
-
-  Future<void> _detectImagePose() async {
-    PngImage? pngImage = await _selectedImage?.toPngImage();
-    if (pngImage == null) return;
-    setState(() {
-      _imageSize = Size(pngImage.width.toDouble(), pngImage.height.toDouble());
-    });
-    final pose = await BodyDetection.detectPose(image: pngImage);
-    _handlePose(pose);
   }
 
   void _handleBodyMask(BodyMask? mask) {
@@ -138,6 +108,27 @@ class _SecCamPageState extends State<SecCamPage> {
         _maskImage = image;
       });
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    loadBckgImage("img/mountains.jpg");
+  }
+
+  void background() {
+    setState(() {
+      loadBckgImage("img/mountains.jpg");
+    });
+  }
+
+  Future loadBckgImage(String path) async {
+    final data = await rootBundle.load(path);
+    final bytes = data.buffer.asUint8List();
+    final tlo = await decodeImageFromList(bytes);
+
+    setState(() => this.tlo = tlo);
   }
 
   Future<void> _stopCameraStream() async {
@@ -192,6 +183,7 @@ class _SecCamPageState extends State<SecCamPage> {
                 child: CustomPaint(
                   child: _cameraImage,
                   foregroundPainter: PoseMaskPainter(
+                    tlo: tlo,
                     turnin: turnin,
                     mask: _maskImage,
                     imageSize: _imageSize,
@@ -259,6 +251,7 @@ class _SecCamPageState extends State<SecCamPage> {
           ),
           panelBuilder: (controller) => BgSwitchPage(
             controller: controller,
+            bckgrnd: background,
           ),
         ));
       }),
