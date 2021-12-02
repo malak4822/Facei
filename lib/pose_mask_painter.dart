@@ -7,6 +7,7 @@ import 'package:body_detection/models/pose_landmark_type.dart';
 
 class PoseMaskPainter extends CustomPainter {
   PoseMaskPainter({
+    this.obrazkamery,
     this.zdj,
     this.tlo,
     this.pose,
@@ -21,21 +22,27 @@ class PoseMaskPainter extends CustomPainter {
   bool? turnin = false;
   final Pose? pose;
   final ui.Image? mask;
+  final ui.Image? obrazkamery;
   final Size imageSize;
 
   final circlePaint = Paint()..color = const Color.fromRGBO(0, 255, 0, 0.8);
 
-  final maskPaint = Paint()..shader;
-
   @override
   void paint(ui.Canvas canvas, Size size) {
     if (turnin == true) {
-      paintBackgroundimage(canvas, tlo!, const ui.Offset(0, 0), 0.25);
+      canvas.drawImageRect(
+          obrazkamery!,
+          Rect.fromLTWH(0, 0, obrazkamery!.width.toDouble(),
+              obrazkamery!.height.toDouble()),
+          Rect.fromLTWH(0, 0, size.width, size.height),
+          Paint()..blendMode = ui.BlendMode.srcATop);
       canvas.drawImageRect(
           mask!,
           Rect.fromLTWH(0, 0, mask!.width.toDouble(), mask!.height.toDouble()),
           Rect.fromLTWH(0, 0, size.width, size.height),
-          maskPaint);
+          Paint()..blendMode = ui.BlendMode.dstIn);
+      paintBackgroundimage(
+          canvas, tlo!, const ui.Offset(0, 0), 0.25, ui.BlendMode.dstATop);
     } else {}
     final double hRatio =
         imageSize.width == 0 ? 1 : size.width / imageSize.width;
@@ -62,8 +69,8 @@ class PoseMaskPainter extends CustomPainter {
     }
   }
 
-  void paintBackgroundimage(
-      ui.Canvas canvas, ui.Image image, Offset centrum, double skala) {
+  void paintBackgroundimage(ui.Canvas canvas, ui.Image image, Offset centrum,
+      double skala, ui.BlendMode tryb) {
     final double left = -1 / 2 * image.width * skala;
     final double top = -1 / 2 * image.height * skala;
     final double right = 1 / 2 * image.width * skala;
@@ -73,7 +80,7 @@ class PoseMaskPainter extends CustomPainter {
         Rect.fromLTRB(0, 0, image.width.toDouble(), image.height.toDouble()),
         Rect.fromLTRB(left + centrum.dx, top + centrum.dy, right + centrum.dx,
             bottom + centrum.dy),
-        Paint());
+        Paint()..blendMode = tryb);
   }
 
   void paintimage(

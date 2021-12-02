@@ -40,16 +40,6 @@ class _CamPageState extends State<CamPage> {
   Image? _cameraImage;
   Size _imageSize = Size.zero;
 
-  @override
-  void initState() {
-    super.initState();
-
-    loadImage("img/carrot.png");
-    loadImage("img/apple.png");
-    loadImage("img/leaf.png");
-    loadImage("img/lemon.png");
-  }
-
   void essan1() {
     setState(() {
       loadImage("img/carrot.png");

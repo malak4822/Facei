@@ -8,14 +8,20 @@ class BgSwitchPage extends StatefulWidget {
   const BgSwitchPage({
     Key? key,
     required this.controller,
-    required this.bckgrnd,
+    this.bckgrnd1,
+    this.bckgrnd2,
+    this.bckgrnd3,
+    this.bckgrnd4,
   }) : super(key: key);
   final ScrollController controller;
 
   @override
   State<BgSwitchPage> createState() => _BgSwitchPageState();
 
-  final bckgrnd;
+  final bckgrnd1;
+  final bckgrnd2;
+  final bckgrnd3;
+  final bckgrnd4;
 }
 
 class _BgSwitchPageState extends State<BgSwitchPage> {
@@ -70,7 +76,7 @@ class _BgSwitchPageState extends State<BgSwitchPage> {
                             splashColor: Colors.blue,
                             highlightColor: Colors.transparent,
                             onTap: () {
-                              widget.bckgrnd();
+                              widget.bckgrnd1();
                             },
                             child: SizedBox(
                                 width: 80.0,
@@ -100,7 +106,9 @@ class _BgSwitchPageState extends State<BgSwitchPage> {
                             splashColor: Colors.yellow,
                             highlightColor: Colors.transparent,
                             borderRadius: BorderRadius.circular(15),
-                            onTap: () {},
+                            onTap: () {
+                              widget.bckgrnd2();
+                            },
                             child: SizedBox(
                                 width: 80.0,
                                 height: 90.0,
@@ -129,7 +137,9 @@ class _BgSwitchPageState extends State<BgSwitchPage> {
                             splashColor: Colors.grey,
                             highlightColor: Colors.transparent,
                             borderRadius: BorderRadius.circular(15),
-                            onTap: () {},
+                            onTap: () {
+                              widget.bckgrnd3();
+                            },
                             child: SizedBox(
                                 width: 80.0,
                                 height: 90.0,
@@ -158,7 +168,9 @@ class _BgSwitchPageState extends State<BgSwitchPage> {
                             splashColor: Colors.green.withOpacity(0.7),
                             borderRadius: BorderRadius.circular(15),
                             highlightColor: Colors.transparent,
-                            onTap: () {},
+                            onTap: () {
+                              widget.bckgrnd4();
+                            },
                             child: SizedBox(
                                 width: 80.0,
                                 height: 90.0,

@@ -40,38 +40,8 @@ class _SecCamPageState extends State<SecCamPage> {
   bool _isDetectingBodyMask = false;
   ui.Image? _maskImage;
   Image? _cameraImage;
+  ui.Image? _uiCameraImage;
   Size _imageSize = Size.zero;
-  Image? _selectedImage;
-
-  Future<void> _selectImage() async {
-    FilePickerResult? result =
-        await FilePicker.platform.pickFiles(type: FileType.image);
-    if (result == null || result.files.isEmpty) return;
-    final path = result.files.single.path;
-    if (path != null) {
-      _resetState();
-      setState(() {
-        _selectedImage = Image.file(File(path));
-      });
-    }
-  }
-
-  void _resetState() {
-    setState(() {
-      _maskImage = null;
-      _imageSize = Size.zero;
-    });
-  }
-
-  Future<void> _detectImageBodyMask() async {
-    PngImage? pngImage = await _selectedImage?.toPngImage();
-    if (pngImage == null) return;
-    setState(() {
-      _imageSize = Size(pngImage.width.toDouble(), pngImage.height.toDouble());
-    });
-    final mask = await BodyDetection.detectBodyMask(image: pngImage);
-    _handleBodyMask(mask);
-  }
 
   Future<void> _startCameraStream() async {
     final request = await Permission.camera.request();
@@ -115,11 +85,32 @@ class _SecCamPageState extends State<SecCamPage> {
     super.initState();
 
     loadBckgImage("img/mountains.jpg");
+    loadBckgImage("img/city.jpg");
+    loadBckgImage("img/beach.jpg");
+    loadBckgImage("img/forest.jpg");
   }
 
-  void background() {
+  void background1() {
     setState(() {
       loadBckgImage("img/mountains.jpg");
+    });
+  }
+
+  void background2() {
+    setState(() {
+      loadBckgImage("img/beach.jpg");
+    });
+  }
+
+  void background3() {
+    setState(() {
+      loadBckgImage("img/city.jpg");
+    });
+  }
+
+  void background4() {
+    setState(() {
+      loadBckgImage("img/forest.jpg");
     });
   }
 
@@ -140,7 +131,7 @@ class _SecCamPageState extends State<SecCamPage> {
     });
   }
 
-  void _handleCameraImage(ImageResult result) {
+  void _handleCameraImage(ImageResult result) async {
     // Ignore callback if navigated out of the page.
     if (!mounted) return;
 
@@ -149,15 +140,16 @@ class _SecCamPageState extends State<SecCamPage> {
     PaintingBinding.instance?.imageCache?.clear();
     PaintingBinding.instance?.imageCache?.clearLiveImages();
 
-    final image = Image.memory(
+    final uiCameraImage = Image.memory(
       result.bytes,
       gaplessPlayback: true,
       fit: BoxFit.fill,
     );
-
+    var cameraImage = await decodeImageFromList(result.bytes);
     setState(() {
-      _cameraImage = image;
+      _cameraImage = uiCameraImage;
       _imageSize = result.size;
+      _uiCameraImage = cameraImage;
     });
   }
 
@@ -183,6 +175,7 @@ class _SecCamPageState extends State<SecCamPage> {
                 child: CustomPaint(
                   child: _cameraImage,
                   foregroundPainter: PoseMaskPainter(
+                    obrazkamery: _uiCameraImage,
                     tlo: tlo,
                     turnin: turnin,
                     mask: _maskImage,
@@ -221,10 +214,10 @@ class _SecCamPageState extends State<SecCamPage> {
                     },
                     child: _isDetectingBodyMask
                         ? Text(
-                            'Turn off body mask detection',
+                            'Turn off mask detection',
                             style: GoogleFonts.overpass(color: Colors.black),
                           )
-                        : Text('Turn on body mask detection',
+                        : Text('Turn on mask detection',
                             style: GoogleFonts.overpass(color: Colors.black)),
                   ),
                 ],
@@ -251,7 +244,10 @@ class _SecCamPageState extends State<SecCamPage> {
           ),
           panelBuilder: (controller) => BgSwitchPage(
             controller: controller,
-            bckgrnd: background,
+            bckgrnd1: background1,
+            bckgrnd2: background2,
+            bckgrnd3: background3,
+            bckgrnd4: background4,
           ),
         ));
       }),
