@@ -42,7 +42,7 @@ class PoseMaskPainter extends CustomPainter {
           Rect.fromLTWH(0, 0, size.width, size.height),
           Paint()..blendMode = ui.BlendMode.dstIn);
       paintBackgroundimage(
-          canvas, tlo!, const ui.Offset(0, 0), 0.25, ui.BlendMode.dstATop);
+          canvas, tlo!, const ui.Offset(0, 0), 0.4, ui.BlendMode.dstATop);
     } else {}
     final double hRatio =
         imageSize.width == 0 ? 1 : size.width / imageSize.width;

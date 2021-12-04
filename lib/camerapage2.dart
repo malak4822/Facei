@@ -80,16 +80,6 @@ class _SecCamPageState extends State<SecCamPage> {
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-
-    loadBckgImage("img/mountains.jpg");
-    loadBckgImage("img/city.jpg");
-    loadBckgImage("img/beach.jpg");
-    loadBckgImage("img/forest.jpg");
-  }
-
   void background1() {
     setState(() {
       loadBckgImage("img/mountains.jpg");

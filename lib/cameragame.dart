@@ -12,6 +12,7 @@ import 'package:body_detection/body_detection.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:praktapp/secbgswitchpage.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import 'pose_mask_painter.dart';
@@ -215,6 +216,7 @@ class _CamPageState extends State<CamPage> {
         body: LayoutBuilder(builder: (context, constraints) {
           return Scaffold(
               body: SlidingUpPanel(
+            maxHeight: 300,
             minHeight: 110,
             body: Container(
               color: Colors.black87,
@@ -225,11 +227,12 @@ class _CamPageState extends State<CamPage> {
                   ]),
             ),
             panelBuilder: (controller) => SecBgSwitchPage(
-              controller: controller,
               buttoncallback1: essan1,
               buttoncallback2: essan2,
               buttoncallback3: essan3,
               buttoncallback4: essan4,
+              kontroler: ScreenshotController(),
+              obraz: _cameraImage,
             ),
           ));
         }));

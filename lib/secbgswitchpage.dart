@@ -1,16 +1,22 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:screenshot/screenshot.dart';
 
 class SecBgSwitchPage extends StatefulWidget {
-  const SecBgSwitchPage({
-    Key? key,
-    required ScrollController controller,
-    required this.buttoncallback1,
-    required this.buttoncallback2,
-    required this.buttoncallback3,
-    required this.buttoncallback4,
-  }) : super(key: key);
+  SecBgSwitchPage(
+      {Key? key,
+      required this.buttoncallback1,
+      required this.buttoncallback2,
+      required this.buttoncallback3,
+      required this.buttoncallback4,
+      required this.kontroler,
+      this.obraz})
+      : super(key: key);
 
   @override
   _SecBgSwitchPageState createState() => _SecBgSwitchPageState();
@@ -19,12 +25,16 @@ class SecBgSwitchPage extends StatefulWidget {
   final buttoncallback2;
   final buttoncallback3;
   final buttoncallback4;
+  var obraz;
+  var kontroler = ScreenshotController();
 }
 
 class _SecBgSwitchPageState extends State<SecBgSwitchPage> {
+  var kontroler = ScreenshotController();
+  Widget? obraz;
   @override
   Widget build(BuildContext context) {
-    return Stack(children: [
+    return Column(children: [
       Container(
           color: Colors.black87,
           height: 110.0,
@@ -180,7 +190,32 @@ class _SecBgSwitchPageState extends State<SecBgSwitchPage> {
                                     ))
                                   ])))))
             ],
+          )),
+      Align(
+          alignment: Alignment.centerRight,
+          child: IconButton(
+            onPressed: () async {
+              final screenshot = await kontroler.captureFromWidget(obraz!);
+
+              await saveImage(screenshot);
+            },
+            icon: const Icon(Icons.screenshot),
+            iconSize: 100.0,
+            color: Colors.black,
           ))
     ]);
+  }
+
+  Future<String> saveImage(Uint8List bytes) async {
+    await [Permission.storage].request();
+
+    final time = DateTime.now()
+        .toIso8601String()
+        .replaceAll(".", "-")
+        .replaceAll(":", "-");
+
+    final name = "screenshot$time";
+    final result = await ImageGallerySaver.saveImage(bytes, name: name);
+    return result["/Pictures"];
   }
 }
