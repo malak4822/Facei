@@ -3,8 +3,6 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:screenshot/screenshot.dart';
 
 class SecBgSwitchPage extends StatefulWidget {
@@ -14,8 +12,7 @@ class SecBgSwitchPage extends StatefulWidget {
       required this.buttoncallback2,
       required this.buttoncallback3,
       required this.buttoncallback4,
-      required this.kontroler,
-      this.obraz})
+      this.ssFuntion})
       : super(key: key);
 
   @override
@@ -25,13 +22,10 @@ class SecBgSwitchPage extends StatefulWidget {
   final buttoncallback2;
   final buttoncallback3;
   final buttoncallback4;
-  var obraz;
-  var kontroler = ScreenshotController();
+  final ssFuntion;
 }
 
 class _SecBgSwitchPageState extends State<SecBgSwitchPage> {
-  var kontroler = ScreenshotController();
-  Widget? obraz;
   @override
   Widget build(BuildContext context) {
     return Column(children: [
@@ -192,30 +186,15 @@ class _SecBgSwitchPageState extends State<SecBgSwitchPage> {
             ],
           )),
       Align(
-          alignment: Alignment.centerRight,
+          alignment: Alignment.centerLeft,
           child: IconButton(
-            onPressed: () async {
-              final screenshot = await kontroler.captureFromWidget(obraz!);
-
-              await saveImage(screenshot);
+            onPressed: () {
+              widget.ssFuntion();
             },
             icon: const Icon(Icons.screenshot),
             iconSize: 100.0,
             color: Colors.black,
           ))
     ]);
-  }
-
-  Future<String> saveImage(Uint8List bytes) async {
-    await [Permission.storage].request();
-
-    final time = DateTime.now()
-        .toIso8601String()
-        .replaceAll(".", "-")
-        .replaceAll(":", "-");
-
-    final name = "screenshot$time";
-    final result = await ImageGallerySaver.saveImage(bytes, name: name);
-    return result["/Pictures"];
   }
 }

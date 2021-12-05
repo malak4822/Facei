@@ -62,10 +62,8 @@ class _MyHomePageState extends State<MyHomePage> {
               child: ElevatedButton(
                 onPressed: () {
                   if (selected1 == false) {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const CamPage()));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => CamPage()));
                   }
                   setState(() {
                     selected1 = !selected1;

@@ -10,6 +10,7 @@ import 'dart:ui' as ui;
 
 import 'package:body_detection/body_detection.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:praktapp/secbgswitchpage.dart';
 import 'package:screenshot/screenshot.dart';
@@ -20,19 +21,21 @@ import 'pose_mask_painter.dart';
 import 'dart:ui';
 
 void main() {
-  runApp(const CamPage());
+  runApp(CamPage());
 }
 
 class CamPage extends StatefulWidget {
-  const CamPage({Key? key}) : super(key: key);
+  CamPage({Key? key}) : super(key: key);
 
   @override
   State<CamPage> createState() => _CamPageState();
+  final kontroler = ScreenshotController();
 }
 
 class _CamPageState extends State<CamPage> {
   ui.Image? zdj;
   ui.Image? nic;
+  var kontroler = ScreenshotController();
 
   bool _isObjectVis = false;
   bool _isDetectingPose = false;
@@ -40,6 +43,25 @@ class _CamPageState extends State<CamPage> {
 
   Image? _cameraImage;
   Size _imageSize = Size.zero;
+
+  Future<String> saveImage(Uint8List bytes) async {
+    await [Permission.storage].request();
+
+    final time = DateTime.now()
+        .toIso8601String()
+        .replaceAll(".", "-")
+        .replaceAll(":", "-");
+
+    final name = "screenshot$time";
+    final result = await ImageGallerySaver.saveImage(bytes, name: name);
+    return result["/Pictures"];
+  }
+
+  void takeScreenshot() async {
+    final screenshot = await kontroler.captureFromWidget(_cameraDetectionView);
+
+    await saveImage(screenshot);
+  }
 
   void essan1() {
     setState(() {
@@ -150,63 +172,55 @@ class _CamPageState extends State<CamPage> {
     setState(() => this.zdj = zdj);
   }
 
-  Widget get _cameraDetectionView => SingleChildScrollView(
-        child: Center(
-          child: Column(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(30),
-                child: CustomPaint(
-                  child: _cameraImage,
-                  foregroundPainter: PoseMaskPainter(
-                    zdj: _isObjectVis ? zdj : nic,
-                    pose: _detectedPose,
-                    imageSize: _imageSize,
-                  ),
-                ),
-              ),
-              Wrap(
-                spacing: 10.0,
-                children: [
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(primary: Colors.white),
-                      onPressed: () async {
-                        _startCameraStream();
-                      },
-                      child: Text(
-                        "On cam",
-                        style: GoogleFonts.overpass(
-                            color: Colors.black, fontSize: 20.0),
-                      )),
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(primary: Colors.white),
-                      onPressed: () async {
-                        _stopCameraStream();
-                      },
-                      child: Text(
-                        "Off cam",
-                        style: GoogleFonts.overpass(
-                            color: Colors.black, fontSize: 20.0),
-                      )),
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(primary: Colors.white),
-                      onPressed: () async {
-                        if (_isObjectVis == true) {
-                          _isObjectVis = !_isObjectVis;
-                        }
-                        // _toggleDetectBodyMask();
-                        _toggleDetectPose();
-                      },
-                      child: Text(
-                        "Wyłącz Efekty",
-                        style: GoogleFonts.overpass(
-                            color: Colors.black, fontSize: 20.0),
-                      )),
-                ],
-              )
-            ],
-          ),
-        ),
+  Widget get _cameraDetectionView => Center(
+      child: ClipRRect(
+          borderRadius: BorderRadius.circular(30),
+          child: CustomPaint(
+            child: _cameraImage,
+            foregroundPainter: PoseMaskPainter(
+              zdj: _isObjectVis ? zdj : nic,
+              pose: _detectedPose,
+              imageSize: _imageSize,
+            ),
+          )));
+  Widget get reszta => Wrap(
+        spacing: 10.0,
+        children: [
+          ElevatedButton(
+              style: ElevatedButton.styleFrom(primary: Colors.white),
+              onPressed: () async {
+                _startCameraStream();
+              },
+              child: Text(
+                "On cam",
+                style:
+                    GoogleFonts.overpass(color: Colors.black, fontSize: 20.0),
+              )),
+          ElevatedButton(
+              style: ElevatedButton.styleFrom(primary: Colors.white),
+              onPressed: () async {
+                _stopCameraStream();
+              },
+              child: Text(
+                "Off cam",
+                style:
+                    GoogleFonts.overpass(color: Colors.black, fontSize: 20.0),
+              )),
+          ElevatedButton(
+              style: ElevatedButton.styleFrom(primary: Colors.white),
+              onPressed: () async {
+                if (_isObjectVis == true) {
+                  _isObjectVis = !_isObjectVis;
+                }
+                // _toggleDetectBodyMask();
+                _toggleDetectPose();
+              },
+              child: Text(
+                "Wyłącz Efekty",
+                style:
+                    GoogleFonts.overpass(color: Colors.black, fontSize: 20.0),
+              )),
+        ],
       );
 
   @override
@@ -216,7 +230,7 @@ class _CamPageState extends State<CamPage> {
         body: LayoutBuilder(builder: (context, constraints) {
           return Scaffold(
               body: SlidingUpPanel(
-            maxHeight: 300,
+            maxHeight: 230,
             minHeight: 110,
             body: Container(
               color: Colors.black87,
@@ -224,16 +238,15 @@ class _CamPageState extends State<CamPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     _cameraDetectionView,
+                    reszta,
                   ]),
             ),
             panelBuilder: (controller) => SecBgSwitchPage(
-              buttoncallback1: essan1,
-              buttoncallback2: essan2,
-              buttoncallback3: essan3,
-              buttoncallback4: essan4,
-              kontroler: ScreenshotController(),
-              obraz: _cameraImage,
-            ),
+                buttoncallback1: essan1,
+                buttoncallback2: essan2,
+                buttoncallback3: essan3,
+                buttoncallback4: essan4,
+                ssFuntion: takeScreenshot),
           ));
         }));
   }
