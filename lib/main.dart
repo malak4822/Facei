@@ -1,8 +1,12 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:praktapp/cameragame.dart';
 import 'package:praktapp/camerapage2.dart';
+
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,6 +20,15 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.portraitUp,
+    ]);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -85,7 +98,18 @@ class _MyHomePageState extends State<MyHomePage> {
                       style: GoogleFonts.overpass(
                           fontSize: 29.0, color: Colors.white),
                     ),
-                    const Icon(Icons.face, size: 80.0, color: Colors.white)
+                    ShaderMask(
+                      blendMode: BlendMode.srcATop,
+                      shaderCallback: (bounds) => const LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Colors.pinkAccent,
+                            Colors.deepPurpleAccent,
+                            Colors.red
+                          ]).createShader(bounds),
+                      child: const Icon(Icons.face, size: 80.0),
+                    )
                   ],
                 ),
                 style: ElevatedButton.styleFrom(
@@ -131,12 +155,23 @@ class _MyHomePageState extends State<MyHomePage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Swap your background",
+                        "Swap ur background",
                         textAlign: TextAlign.center,
                         style: GoogleFonts.overpass(
                             fontSize: 29.0, color: Colors.white),
                       ),
-                      const Icon(Icons.image, size: 80.0, color: Colors.white)
+                      ShaderMask(
+                        blendMode: BlendMode.srcATop,
+                        shaderCallback: (bounds) => const LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Colors.pinkAccent,
+                              Colors.deepPurpleAccent,
+                              Colors.red
+                            ]).createShader(bounds),
+                        child: const Icon(Icons.image, size: 80.0),
+                      )
                     ],
                   ),
                   style: ElevatedButton.styleFrom(
@@ -155,8 +190,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 curve: Curves.fastOutSlowIn,
                 width: MediaQuery.of(context).size.width,
                 height: selected4
-                    ? MediaQuery.of(context).size.height * 0.2
-                    : MediaQuery.of(context).size.height * 0.2 * 2,
+                    ? MediaQuery.of(context).size.height * 0.25
+                    : MediaQuery.of(context).size.height * 0.45,
                 duration: const Duration(milliseconds: 400),
                 child: ElevatedButton(
                   onPressed: () {
@@ -173,8 +208,25 @@ class _MyHomePageState extends State<MyHomePage> {
                       selected2 = true;
                     }
                   },
-                  child: const Icon(Icons.exit_to_app,
-                      size: 80, color: Colors.white),
+                  child: ShaderMask(
+                    blendMode: BlendMode.srcATop,
+                    shaderCallback: (bounds) => const LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Colors.pinkAccent,
+                          Colors.deepPurpleAccent,
+                          Colors.red
+                        ]).createShader(bounds),
+                    child: Transform.rotate(
+                      angle: 180 * pi / 180,
+                      child: const Icon(
+                        Icons.details,
+                        color: Colors.white,
+                        size: 100.0,
+                      ),
+                    ),
+                  ),
                   style: ElevatedButton.styleFrom(
                     primary: Colors.black,
                     side: const BorderSide(width: 1, color: Colors.white),

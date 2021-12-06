@@ -5,14 +5,15 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class BgSwitchPage extends StatefulWidget {
-  const BgSwitchPage({
-    Key? key,
-    required this.controller,
-    this.bckgrnd1,
-    this.bckgrnd2,
-    this.bckgrnd3,
-    this.bckgrnd4,
-  }) : super(key: key);
+  const BgSwitchPage(
+      {Key? key,
+      required this.controller,
+      this.bckgrnd1,
+      this.bckgrnd2,
+      this.bckgrnd3,
+      this.bckgrnd4,
+      this.ssFuntion})
+      : super(key: key);
   final ScrollController controller;
 
   @override
@@ -22,6 +23,7 @@ class BgSwitchPage extends StatefulWidget {
   final bckgrnd2;
   final bckgrnd3;
   final bckgrnd4;
+  final ssFuntion;
 }
 
 class _BgSwitchPageState extends State<BgSwitchPage> {
@@ -37,35 +39,6 @@ class _BgSwitchPageState extends State<BgSwitchPage> {
             child: ListView(
               scrollDirection: Axis.horizontal,
               children: [
-                Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 15, 10, 15),
-                    child: Material(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(15),
-                        child: InkWell(
-                            borderRadius: BorderRadius.circular(15),
-                            splashColor: Colors.black,
-                            highlightColor: Colors.transparent,
-                            onTap: () {},
-                            child: SizedBox(
-                                width: 80.0,
-                                height: 90.0,
-                                child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const FaIcon(
-                                        FontAwesomeIcons.fileImage,
-                                        color: Colors.black,
-                                        size: 50.0,
-                                      ),
-                                      Center(
-                                          child: Text(
-                                        "Ur own image",
-                                        style: GoogleFonts.overpass(
-                                            fontSize: 10.0,
-                                            color: Colors.black),
-                                      ))
-                                    ]))))),
                 Padding(
                     padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
                     child: Material(
@@ -191,10 +164,31 @@ class _BgSwitchPageState extends State<BgSwitchPage> {
                                       ))
                                     ])))))
               ],
-            ))
+            )),
+        Material(
+            color: Colors.black87,
+            child: InkWell(
+                splashColor: Colors.black38,
+                highlightColor: Colors.transparent,
+                onTap: () {
+                  widget.ssFuntion();
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 100.0),
+                    const Icon(Icons.screenshot,
+                        size: 80.0, color: Colors.white),
+                    Text("Take Screenshot",
+                        style: GoogleFonts.overpass(
+                          color: Colors.white,
+                          fontSize: 25.0,
+                        )),
+                    const Icon(Icons.screenshot,
+                        size: 80.0, color: Colors.white),
+                  ],
+                )))
       ],
     );
   }
 }
-
-Widget buildAboutText() => Column();

@@ -13,6 +13,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:praktapp/secbgswitchpage.dart';
+import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -29,38 +30,40 @@ class CamPage extends StatefulWidget {
 
   @override
   State<CamPage> createState() => _CamPageState();
-  final kontroler = ScreenshotController();
 }
 
 class _CamPageState extends State<CamPage> {
   ui.Image? zdj;
   ui.Image? nic;
-  var kontroler = ScreenshotController();
+  var kontroler1 = ScreenshotController();
 
   bool _isObjectVis = false;
   bool _isDetectingPose = false;
+  bool _isCameraDetectin = true;
+
   Pose? _detectedPose;
 
   Image? _cameraImage;
   Size _imageSize = Size.zero;
 
-  Future<String> saveImage(Uint8List bytes) async {
+  Future<String> saveImages(Uint8List bytes) async {
     await [Permission.storage].request();
 
-    final time = DateTime.now()
+    final times = DateTime.now()
         .toIso8601String()
         .replaceAll(".", "-")
         .replaceAll(":", "-");
 
-    final name = "screenshot$time";
+    final name = "screenshot$times";
     final result = await ImageGallerySaver.saveImage(bytes, name: name);
     return result["/Pictures"];
   }
 
-  void takeScreenshot() async {
-    final screenshot = await kontroler.captureFromWidget(_cameraDetectionView);
+  void takeScreenshot1() async {
+    final screenshot1 =
+        await kontroler1.captureFromWidget(_cameraDetectionView);
 
-    await saveImage(screenshot);
+    await saveImages(screenshot1);
   }
 
   void essan1() {
@@ -164,6 +167,8 @@ class _CamPageState extends State<CamPage> {
     });
   }
 
+  double value = 0.5;
+
   Future loadImage(String path) async {
     final data = await rootBundle.load(path);
     final bytes = data.buffer.asUint8List();
@@ -172,82 +177,93 @@ class _CamPageState extends State<CamPage> {
     setState(() => this.zdj = zdj);
   }
 
-  Widget get _cameraDetectionView => Center(
-      child: ClipRRect(
-          borderRadius: BorderRadius.circular(30),
-          child: CustomPaint(
-            child: _cameraImage,
-            foregroundPainter: PoseMaskPainter(
-              zdj: _isObjectVis ? zdj : nic,
-              pose: _detectedPose,
-              imageSize: _imageSize,
-            ),
-          )));
+  Widget get _cameraDetectionView => SingleChildScrollView(
+        child: Center(
+          child: Column(
+            children: [
+              ClipRRect(
+                  borderRadius: BorderRadius.circular(30),
+                  child: CustomPaint(
+                    child: _cameraImage,
+                    foregroundPainter: PoseMaskPainter(
+                      value: value,
+                      zdj: _isObjectVis ? zdj : nic,
+                      pose: _detectedPose,
+                      imageSize: _imageSize,
+                    ),
+                  ))
+            ],
+          ),
+        ),
+      );
   Widget get reszta => Wrap(
         spacing: 10.0,
         children: [
-          ElevatedButton(
-              style: ElevatedButton.styleFrom(primary: Colors.white),
-              onPressed: () async {
-                _startCameraStream();
-              },
-              child: Text(
-                "On cam",
+          SizedBox(
+              width: 200.0,
+              child: Slider(
+                  value: value,
+                  min: 0,
+                  activeColor: Colors.white,
+                  inactiveColor: Colors.white38,
+                  max: 1,
+                  onChanged: (value) => setState(() {
+                        this.value = value;
+                      }))),
+          Column(children: [
+            IconButton(
+                splashColor: Colors.black87,
+                iconSize: 50.0,
+                onPressed: () {
+                  _isCameraDetectin = !_isCameraDetectin;
+                  if (_isCameraDetectin == true) {
+                    _stopCameraStream();
+                  } else {
+                    _startCameraStream();
+                  }
+                },
+                icon:
+                    const Icon(Icons.camera_alt_outlined, color: Colors.white)),
+            Text("on/off cam",
                 style:
-                    GoogleFonts.overpass(color: Colors.black, fontSize: 20.0),
-              )),
-          ElevatedButton(
-              style: ElevatedButton.styleFrom(primary: Colors.white),
-              onPressed: () async {
-                _stopCameraStream();
-              },
-              child: Text(
-                "Off cam",
+                    GoogleFonts.overpass(color: Colors.white, fontSize: 15.0))
+          ]),
+          Column(children: [
+            IconButton(
+                splashColor: Colors.black87,
+                iconSize: 50.0,
+                onPressed: () {
+                  _toggleDetectPose();
+                },
+                icon: const Icon(Icons.portrait_rounded, color: Colors.white)),
+            Text("on/off efekt",
                 style:
-                    GoogleFonts.overpass(color: Colors.black, fontSize: 20.0),
-              )),
-          ElevatedButton(
-              style: ElevatedButton.styleFrom(primary: Colors.white),
-              onPressed: () async {
-                if (_isObjectVis == true) {
-                  _isObjectVis = !_isObjectVis;
-                }
-                // _toggleDetectBodyMask();
-                _toggleDetectPose();
-              },
-              child: Text(
-                "Wyłącz Efekty",
-                style:
-                    GoogleFonts.overpass(color: Colors.black, fontSize: 20.0),
-              )),
+                    GoogleFonts.overpass(color: Colors.white, fontSize: 15.0))
+          ]),
         ],
       );
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.white38,
-        body: LayoutBuilder(builder: (context, constraints) {
-          return Scaffold(
-              body: SlidingUpPanel(
-            maxHeight: 230,
+    return Scaffold(body: LayoutBuilder(builder: (context, constraints) {
+      return Scaffold(
+          backgroundColor: const Color.fromRGBO(60, 60, 60, 1),
+          body: SlidingUpPanel(
+            maxHeight: 210,
             minHeight: 110,
             body: Container(
-              color: Colors.black87,
+              color: Colors.black45,
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _cameraDetectionView,
-                    reszta,
-                  ]),
+                  children: [_cameraDetectionView, reszta]),
             ),
             panelBuilder: (controller) => SecBgSwitchPage(
                 buttoncallback1: essan1,
                 buttoncallback2: essan2,
                 buttoncallback3: essan3,
                 buttoncallback4: essan4,
-                ssFuntion: takeScreenshot),
+                ssFuntion1: takeScreenshot1),
           ));
-        }));
+    }));
   }
 }

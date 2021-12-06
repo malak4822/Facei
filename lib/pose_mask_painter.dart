@@ -7,6 +7,7 @@ import 'package:body_detection/models/pose_landmark_type.dart';
 
 class PoseMaskPainter extends CustomPainter {
   PoseMaskPainter({
+    this.value,
     this.obrazkamery,
     this.zdj,
     this.tlo,
@@ -24,6 +25,7 @@ class PoseMaskPainter extends CustomPainter {
   final ui.Image? mask;
   final ui.Image? obrazkamery;
   final Size imageSize;
+  double? value;
 
   final circlePaint = Paint()..color = const Color.fromRGBO(0, 255, 0, 0.8);
 
@@ -52,11 +54,6 @@ class PoseMaskPainter extends CustomPainter {
     offsetForPart(PoseLandmark part) =>
         Offset(part.position.x * hRatio, part.position.y * vRatio);
 
-    for (final part in pose!.landmarks) {
-      // Draw a circular indicator for the landmark.
-      canvas.drawCircle(offsetForPart(part), 5, circlePaint);
-    }
-
     if (zdj != null) {
       if (pose?.landmarks
               .indexWhere((element) => element.type == PoseLandmarkType.nose) !=
@@ -64,7 +61,7 @@ class PoseMaskPainter extends CustomPainter {
         final landmark = pose?.landmarks.firstWhere(
           (element) => element.type == PoseLandmarkType.nose,
         );
-        paintimage(canvas, zdj!, offsetForPart(landmark!), 0.1);
+        paintimage(canvas, zdj!, offsetForPart(landmark!), value!);
       }
     }
   }

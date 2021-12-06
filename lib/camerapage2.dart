@@ -7,8 +7,10 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:body_detection/models/image_result.dart';
 import 'package:body_detection/models/pose.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 import 'package:praktapp/bgswitchpage.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
@@ -42,6 +44,9 @@ class _SecCamPageState extends State<SecCamPage> {
   Image? _cameraImage;
   ui.Image? _uiCameraImage;
   Size _imageSize = Size.zero;
+  bool _isCameraDetectin = true;
+  double? value = 0.5;
+  var kontroler = ScreenshotController();
 
   Future<void> _startCameraStream() async {
     final request = await Permission.camera.request();
@@ -54,6 +59,25 @@ class _SecCamPageState extends State<SecCamPage> {
         },
       );
     }
+  }
+
+  Future<String> saveImage(Uint8List bytes) async {
+    await [Permission.storage].request();
+
+    final time1 = DateTime.now()
+        .toIso8601String()
+        .replaceAll(".", "-")
+        .replaceAll(":", "-");
+
+    final name = "screenshot$time1";
+    final result = await ImageGallerySaver.saveImage(bytes, name: name);
+    return result["/Pictures"];
+  }
+
+  void takeScreenshot() async {
+    final screenshot = await kontroler.captureFromWidget(_cameraDetectionView);
+
+    await saveImage(screenshot);
   }
 
   void _handleBodyMask(BodyMask? mask) {
@@ -165,6 +189,7 @@ class _SecCamPageState extends State<SecCamPage> {
                 child: CustomPaint(
                   child: _cameraImage,
                   foregroundPainter: PoseMaskPainter(
+                    value: value!,
                     obrazkamery: _uiCameraImage,
                     tlo: tlo,
                     turnin: turnin,
@@ -173,72 +198,68 @@ class _SecCamPageState extends State<SecCamPage> {
                   ),
                 ),
               ),
-              Wrap(
-                spacing: 10.0,
-                children: [
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(primary: Colors.white),
-                      onPressed: () {
-                        _startCameraStream();
-                      },
-                      child: Text(
-                        "On Cam",
-                        style: GoogleFonts.overpass(
-                            color: Colors.black, fontSize: 20.0),
-                      )),
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(primary: Colors.white),
-                      onPressed: () async {
-                        _stopCameraStream();
-                      },
-                      child: Text(
-                        "Off Cam",
-                        style: GoogleFonts.overpass(
-                            color: Colors.black, fontSize: 20.0),
-                      )),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.white),
-                    onPressed: () async {
-                      turnin = !turnin;
-                      _toggleDetectBodyMask();
-                    },
-                    child: _isDetectingBodyMask
-                        ? Text(
-                            'Turn off mask detection',
-                            style: GoogleFonts.overpass(color: Colors.black),
-                          )
-                        : Text('Turn on mask detection',
-                            style: GoogleFonts.overpass(color: Colors.black)),
-                  ),
-                ],
-              )
             ],
           ),
         ),
       );
-
+  Widget get reszta => Wrap(
+        spacing: 10.0,
+        children: [
+          Column(children: [
+            IconButton(
+                splashColor: Colors.black87,
+                iconSize: 60.0,
+                onPressed: () {
+                  _isCameraDetectin = !_isCameraDetectin;
+                  if (_isCameraDetectin == true) {
+                    _stopCameraStream();
+                  } else {
+                    _startCameraStream();
+                  }
+                },
+                icon:
+                    const Icon(Icons.camera_alt_outlined, color: Colors.white)),
+            Text("on/off cam",
+                style:
+                    GoogleFonts.overpass(color: Colors.white, fontSize: 15.0))
+          ]),
+          Column(children: [
+            IconButton(
+                splashColor: Colors.black87,
+                iconSize: 60.0,
+                onPressed: () {
+                  turnin = !turnin;
+                  _toggleDetectBodyMask();
+                },
+                icon: const Icon(Icons.portrait_rounded, color: Colors.white)),
+            Text("on/off efekt",
+                style:
+                    GoogleFonts.overpass(color: Colors.white, fontSize: 15.0))
+          ]),
+        ],
+      );
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white38,
+      backgroundColor: const Color.fromRGBO(60, 60, 60, 1),
       body: LayoutBuilder(builder: (context, constraints) {
         return Scaffold(
             body: SlidingUpPanel(
           minHeight: 110,
+          maxHeight: 210,
           body: Container(
             color: Colors.black87,
-            child:
-                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              _cameraDetectionView,
-            ]),
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [_cameraDetectionView, reszta]),
           ),
           panelBuilder: (controller) => BgSwitchPage(
-            controller: controller,
-            bckgrnd1: background1,
-            bckgrnd2: background2,
-            bckgrnd3: background3,
-            bckgrnd4: background4,
-          ),
+              controller: controller,
+              bckgrnd1: background1,
+              bckgrnd2: background2,
+              bckgrnd3: background3,
+              bckgrnd4: background4,
+              ssFuntion: takeScreenshot),
         ));
       }),
     );

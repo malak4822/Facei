@@ -3,7 +3,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:screenshot/screenshot.dart';
+import 'package:praktapp/pose_mask_painter.dart';
+import 'package:provider/provider.dart';
 
 class SecBgSwitchPage extends StatefulWidget {
   SecBgSwitchPage(
@@ -12,7 +13,8 @@ class SecBgSwitchPage extends StatefulWidget {
       required this.buttoncallback2,
       required this.buttoncallback3,
       required this.buttoncallback4,
-      this.ssFuntion})
+      this.ssFuntion1,
+      this.value})
       : super(key: key);
 
   @override
@@ -22,10 +24,13 @@ class SecBgSwitchPage extends StatefulWidget {
   final buttoncallback2;
   final buttoncallback3;
   final buttoncallback4;
-  final ssFuntion;
+  final ssFuntion1;
+  double? value = 0.6;
 }
 
 class _SecBgSwitchPageState extends State<SecBgSwitchPage> {
+  double value = 0.6;
+
   @override
   Widget build(BuildContext context) {
     return Column(children: [
@@ -35,34 +40,6 @@ class _SecBgSwitchPageState extends State<SecBgSwitchPage> {
           child: ListView(
             scrollDirection: Axis.horizontal,
             children: [
-              Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 15, 10, 15),
-                  child: Material(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15),
-                      child: InkWell(
-                          borderRadius: BorderRadius.circular(15),
-                          splashColor: Colors.black,
-                          highlightColor: Colors.transparent,
-                          onTap: () {},
-                          child: SizedBox(
-                              width: 80.0,
-                              height: 90.0,
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const FaIcon(
-                                      FontAwesomeIcons.fileImage,
-                                      color: Colors.black,
-                                      size: 50.0,
-                                    ),
-                                    Center(
-                                        child: Text(
-                                      "Ur own image",
-                                      style: GoogleFonts.overpass(
-                                          fontSize: 10.0, color: Colors.black),
-                                    ))
-                                  ]))))),
               Padding(
                   padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
                   child: Material(
@@ -185,16 +162,27 @@ class _SecBgSwitchPageState extends State<SecBgSwitchPage> {
                                   ])))))
             ],
           )),
-      Align(
-          alignment: Alignment.centerLeft,
-          child: IconButton(
-            onPressed: () {
-              widget.ssFuntion();
-            },
-            icon: const Icon(Icons.screenshot),
-            iconSize: 100.0,
-            color: Colors.black,
-          ))
+      Material(
+          color: Colors.black87,
+          child: InkWell(
+              splashColor: Colors.black38,
+              highlightColor: Colors.transparent,
+              onTap: () {
+                widget.ssFuntion1();
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 100.0),
+                  const Icon(Icons.screenshot, size: 80.0, color: Colors.white),
+                  Text("Take Screenshot",
+                      style: GoogleFonts.overpass(
+                        color: Colors.white,
+                        fontSize: 25.0,
+                      )),
+                  const Icon(Icons.screenshot, size: 80.0, color: Colors.white),
+                ],
+              )))
     ]);
   }
 }
