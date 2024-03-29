@@ -1,6 +1,6 @@
 # Facei
 
-<img src='[[figure/rstudio.png](https://lh3.googleusercontent.com/9eq6xSjFiwl2f4dXSB3AGsvsDlv5DaZGu4J2k5k4F87CHoyFBlrYd1P659LWC5kh1g)' width='100'>
+<img href='[[figure/rstudio.png](https://lh3.googleusercontent.com/9eq6xSjFiwl2f4dXSB3AGsvsDlv5DaZGu4J2k5k4F87CHoyFBlrYd1P659LWC5kh1g)' width='100'>
 
 ## Description
 Facei is a mobile application designed primarily for fun. With Praktapp, you can swap your nose with various fruits and change your background by selecting different options. Additionally, if you choose your favorite style, you can take a screenshot by expanding the bottom app bar. I also wrote a story in Polish about my journey of doing this app [Medium Article](https://medium.com/@kmalak4822/o-kodzie-kt%C3%B3ry-pozornie-nie-sprawia%C5%82-wi%C4%99kszych-problem%C3%B3w-292d48935bd1)
