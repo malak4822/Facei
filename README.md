@@ -6,7 +6,7 @@ This app was developed within one month as part of a school apprenticeship proje
 
 ## Links
 ### <img src='https://cdn-icons-png.flaticon.com/512/732/732208.png' width='24'>  [Google Play Link](https://play.google.com/store/apps/details?id=malaq.facei) 
-### <img src='https://cdn.icon-icons.com/icons2/2997/PNG/512/medium_logo_icon_187624.png' width='24'> [Medium Article](https://medium.com/@kmalak4822/o-kodzie-kt%C3%B3ry-pozornie-nie-sprawia%C5%82-wi%C4%99kszych-problem%C3%B3w-292d48935bd1)
+### <img src='https://static-00.iconduck.com/assets.00/medium-icon-1024x567-zp0l0hi4.png' width='24'> [Medium Article](https://medium.com/@kmalak4822/o-kodzie-kt%C3%B3ry-pozornie-nie-sprawia%C5%82-wi%C4%99kszych-problem%C3%B3w-292d48935bd1)
 
 ## Used To Do App
 - Body Detection Package
